@@ -20,7 +20,7 @@ class Champion(
 
     @field:NotBlank
     @Enumerated(EnumType.STRING) @Column(nullable = false)
-    val difficulty: String
+    val difficulty: ChampionDifficulty
 ) {
     @Id
     @GeneratedValue
