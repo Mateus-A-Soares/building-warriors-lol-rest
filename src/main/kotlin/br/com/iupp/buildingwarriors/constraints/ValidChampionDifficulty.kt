@@ -1,6 +1,6 @@
 package br.com.iupp.buildingwarriors.constraints
 
-import br.com.iupp.buildingwarriors.controller.champion.request.ChampionDifficulty
+import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import io.micronaut.core.annotation.AnnotationValue
 import io.micronaut.validation.validator.constraints.ConstraintValidator
 import io.micronaut.validation.validator.constraints.ConstraintValidatorContext
@@ -10,9 +10,9 @@ import javax.validation.Payload
 import kotlin.reflect.KClass
 
 /**
-* A string precisa ser igual a um dos valores da Enum ChampionDifficulty, independente da caixa das letras.
-* Valor null e considerado valido.
-*/
+ * A string precisa ser igual a um dos valores da Enum ChampionDifficulty, independente da caixa das letras.
+ * Valor null e considerado valido.
+ */
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @Constraint(validatedBy = [ValidChampionDifficultyValidator::class])

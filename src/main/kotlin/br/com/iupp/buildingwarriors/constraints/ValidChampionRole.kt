@@ -1,6 +1,6 @@
 package br.com.iupp.buildingwarriors.constraints
 
-import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRole
+import br.com.iupp.buildingwarriors.model.ChampionRole
 import io.micronaut.core.annotation.AnnotationValue
 import io.micronaut.validation.validator.constraints.ConstraintValidator
 import io.micronaut.validation.validator.constraints.ConstraintValidatorContext
