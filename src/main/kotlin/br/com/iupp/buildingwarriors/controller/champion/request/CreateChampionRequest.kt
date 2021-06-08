@@ -1,5 +1,6 @@
 package br.com.iupp.buildingwarriors.controller.champion.request
 
+import br.com.iupp.buildingwarriors.constraints.UniqueChampionName
 import br.com.iupp.buildingwarriors.constraints.ValidChampionDifficulty
 import br.com.iupp.buildingwarriors.constraints.ValidChampionRole
 import br.com.iupp.buildingwarriors.model.Champion
@@ -11,7 +12,7 @@ import javax.validation.constraints.Size
 
 @Introspected
 data class CreateChampionRequest(
-    @field:NotBlank @field:Size(max = 50)
+    @field:NotBlank @field:Size(max = 50) @field:UniqueChampionName
     val name: String?,
     @field:NotBlank @field:Size(max = 255)
     val shortDescription: String?,

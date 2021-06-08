@@ -5,4 +5,7 @@ import io.micronaut.data.annotation.Repository
 import io.micronaut.data.repository.CrudRepository
 
 @Repository
-interface ChampionRepository : CrudRepository<Champion, Long>
+interface ChampionRepository : CrudRepository<Champion, Long> {
+
+    fun existsByName(name: String) : Boolean
+}
