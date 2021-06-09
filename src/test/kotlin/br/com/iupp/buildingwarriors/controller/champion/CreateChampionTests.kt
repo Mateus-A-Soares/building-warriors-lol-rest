@@ -7,6 +7,7 @@ import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.repository.ChampionRepository
+import br.com.iupp.buildingwarriors.service.ChampionService
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
@@ -19,6 +20,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import javax.inject.Inject
 
 @MicronautTest(transactional = false, environments = ["test"])
@@ -135,8 +138,29 @@ class CreateChampionTests(@Inject val championRepository: ChampionRepository) {
 
         val optionalBody = exception.response.getBody(ConstraintErrorDto::class.java)
         assertTrue(optionalBody.isPresent)
-        assertEquals(optionalBody.get().message, "championRequest.name: O nome deve ser único")
+        assertEquals("championRequest.name: O nome deve ser único", optionalBody.get().message)
     }
+
+    @Test
+    fun `deve retornar status 500 quando Exception inesperada for lancada`() {
+        val serviceMock = Mockito.mock(ChampionService::class.java)
+        `when`(serviceMock.saveChampion(any(Champion::class.java)))
+            .thenThrow(RuntimeException())
+        val controller = ChampionController(serviceMock)
+        val exception =
+            controller.createChampion(
+                CreateChampionRequest(
+                    name = "Ahri",
+                    shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
+                    role = ChampionRole.MAGE.toString(),
+                    difficulty = ChampionDifficulty.MODERATE.toString()
+                )
+            )
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.code, exception.status.code)
+    }
+
+    private fun <T> any(type: Class<T>): T = Mockito.any(type)
 
     private data class ConstraintErrorDto(
         val message: String?,
