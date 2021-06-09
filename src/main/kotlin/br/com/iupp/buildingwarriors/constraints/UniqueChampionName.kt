@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 
 /**
  *  Verifica se o campo name na tabela Champion não tem o valor no parâmetro anotado.
- * Valor null e considerado invalido.
+ * Valor null e considerado valido.
  */
 @Target(FIELD, PROPERTY, VALUE_PARAMETER)
 @Retention(RUNTIME)
@@ -36,6 +36,6 @@ private class UniqueChampionNameValidator(@Inject val championRepository: Champi
     ): Boolean {
         return championName?.let {
             !championRepository.existsByName(it)
-        } ?: false
+        } ?: true
     }
 }
