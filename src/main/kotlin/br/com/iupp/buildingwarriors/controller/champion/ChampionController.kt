@@ -38,7 +38,7 @@ class ChampionController(
     }
 
     @Get("/{id}")
-    fun getChampion(@PathVariable @Positive id: Long): HttpResponse<ChampionDetailsResponse> {
+    fun getChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<ChampionDetailsResponse> {
         return try {
             val championOptonal = service.getChampion(id)
             with(championOptonal) {
