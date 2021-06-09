@@ -1,8 +1,9 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
-import br.com.iupp.buildingwarriors.controller.champion.CreateChampionTests.ConstraintErrorDto.Embedded.ErrorMessage
 import br.com.iupp.buildingwarriors.controller.champion.request.CreateChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionCreatedResponse
+import br.com.iupp.buildingwarriors.controller.champion.response.ConstraintErrorDto
+import br.com.iupp.buildingwarriors.controller.champion.response.ConstraintErrorDto.Embedded.ErrorMessage
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
@@ -165,16 +166,4 @@ class CreateChampionTests(
     }
 
     private fun <T> any(type: Class<T>): T = Mockito.any(type)
-
-    private data class ConstraintErrorDto(
-        val message: String?,
-        val _embedded: Embedded?
-    ) {
-        val errors: List<ErrorMessage?>?
-            get() = _embedded?.errors
-
-        data class Embedded(val errors: List<ErrorMessage?>?) {
-            data class ErrorMessage(val message: String?)
-        }
-    }
 }
