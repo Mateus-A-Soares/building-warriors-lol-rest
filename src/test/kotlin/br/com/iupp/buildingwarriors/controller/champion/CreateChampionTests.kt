@@ -4,6 +4,8 @@ import br.com.iupp.buildingwarriors.controller.champion.CreateChampionTests.Cons
 import br.com.iupp.buildingwarriors.controller.champion.request.CreateChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionCreatedResponse
 import br.com.iupp.buildingwarriors.model.Champion
+import br.com.iupp.buildingwarriors.model.ChampionDifficulty
+import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.repository.ChampionRepository
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
@@ -106,11 +108,41 @@ class CreateChampionTests(@Inject val championRepository: ChampionRepository) {
         }
     }
 
+    @Test
+    fun `deve retornar erro de validacao para champion com nome ja cadastrado`() {
+        championRepository.save(
+            Champion(
+                name = "Ahri",
+                shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
+                role = ChampionRole.MAGE,
+                difficulty = ChampionDifficulty.MODERATE
+            )
+        )
+
+        val request = HttpRequest.POST(
+            "/api/v1/champions", CreateChampionRequest(
+                name = "Ahri",
+                shortDescription = "A raposa de nove caudas",
+                role = "ASSASSIN",
+                difficulty = "HIGH"
+            )
+        )
+
+        val exception = assertThrows<HttpClientResponseException> {
+            championsClient.toBlocking()
+                .exchange(request, ChampionCreatedResponse::class.java)
+        }
+
+        val optionalBody = exception.response.getBody(ConstraintErrorDto::class.java)
+        assertTrue(optionalBody.isPresent)
+        assertEquals(optionalBody.get().message, "championRequest.name: O nome deve ser único")
+    }
+
     private data class ConstraintErrorDto(
         val message: String?,
         val _embedded: Embedded?
     ) {
-        val errors : List<ErrorMessage?>?
+        val errors: List<ErrorMessage?>?
             get() = _embedded?.errors
 
         data class Embedded(val errors: List<ErrorMessage?>?) {
