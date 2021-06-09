@@ -13,6 +13,7 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.http.server.util.HttpHostResolver
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -25,7 +26,10 @@ import org.mockito.Mockito.`when`
 import javax.inject.Inject
 
 @MicronautTest(transactional = false, environments = ["test"])
-class CreateChampionTests(@Inject val championRepository: ChampionRepository) {
+class CreateChampionTests(
+    @Inject val championRepository: ChampionRepository,
+    @Inject val httpHostResolver: HttpHostResolver
+) {
 
     @Inject
     @field:Client("/", errorType = ConstraintErrorDto::class)
@@ -52,14 +56,15 @@ class CreateChampionTests(@Inject val championRepository: ChampionRepository) {
             .exchange(request, ChampionCreatedResponse::class.java)
 
         with(response) {
-            assertEquals(HttpStatus.OK.code, status.code)
+            assertEquals(HttpStatus.CREATED.code, status.code)
             val body = body()
             assertNotNull(body)
             assertNotNull(body!!.id)
             val championCreated: Champion? = championRepository.findById(body.id!!).orElse(null)
             assertNotNull(championCreated)
+            assertEquals( "${httpHostResolver.resolve(request)}/api/v1/champions/${championCreated!!.id}", header("location"))
             with(body()!!) {
-                assertEquals(createChampionRequestBody.name, name, championCreated!!.name)
+                assertEquals(createChampionRequestBody.name, name, championCreated.name)
                 assertEquals(
                     createChampionRequestBody.shortDescription,
                     shortDescription,
@@ -146,17 +151,16 @@ class CreateChampionTests(@Inject val championRepository: ChampionRepository) {
         val serviceMock = Mockito.mock(ChampionService::class.java)
         `when`(serviceMock.saveChampion(any(Champion::class.java)))
             .thenThrow(RuntimeException())
-        val controller = ChampionController(serviceMock)
+        val controller = ChampionController(serviceMock, httpHostResolver)
+        val requestBody = CreateChampionRequest(
+            name = "Ahri",
+            shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
+            role = ChampionRole.MAGE.toString(),
+            difficulty = ChampionDifficulty.MODERATE.toString()
+        )
+        val httpRequest = HttpRequest.POST("/api/v1/champions", requestBody)
         val exception =
-            controller.createChampion(
-                CreateChampionRequest(
-                    name = "Ahri",
-                    shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
-                    role = ChampionRole.MAGE.toString(),
-                    difficulty = ChampionDifficulty.MODERATE.toString()
-                )
-            )
-
+            controller.createChampion(httpRequest = httpRequest, championRequest = requestBody)
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.code, exception.status.code)
     }
 
