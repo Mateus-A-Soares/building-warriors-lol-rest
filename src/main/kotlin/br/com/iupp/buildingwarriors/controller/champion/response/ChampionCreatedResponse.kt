@@ -5,10 +5,17 @@ import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 
 class ChampionCreatedResponse(
-    champion: Champion,
-    val id: Long? = champion.id,
-    val name: String = champion.name,
-    val shortDescription: String = champion.shortDescription,
-    val role: ChampionRole = champion.role,
-    val difficulty: ChampionDifficulty = champion.difficulty
-)
+    val id: Long?,
+    val name: String,
+    val shortDescription: String,
+    val role: ChampionRole,
+    val difficulty: ChampionDifficulty
+) {
+    constructor(champion: Champion) : this(
+        id = champion.id,
+        name = champion.name,
+        shortDescription = champion.shortDescription,
+        role = champion.role,
+        difficulty = champion.difficulty
+    )
+}
