@@ -82,8 +82,6 @@ class ChampionController(
         return try {
             service.deleteChampion(id)
             return HttpResponse.noContent()
-        } catch (e: ConstraintViolationException) {
-            HttpResponse.notFound()
         } catch (e: Throwable) {
             HttpResponse.serverError()
         }
