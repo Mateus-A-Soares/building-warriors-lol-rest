@@ -11,10 +11,12 @@ import br.com.iupp.buildingwarriors.repository.ChampionRepository
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import javax.transaction.Transactional
 
 @Singleton
-class ChampionServiceImpl(@Inject val championRepository: ChampionRepository) : ChampionService {
+open class ChampionServiceImpl(@Inject val championRepository: ChampionRepository) : ChampionService {
 
+    @Transactional
     override fun saveChampion(champion: Champion): ChampionCreatedResponse =
         ChampionCreatedResponse(championRepository.save(champion))
 
@@ -26,33 +28,28 @@ class ChampionServiceImpl(@Inject val championRepository: ChampionRepository) : 
         }
     }
 
+    @Transactional
     override fun updateChampion(
         id: Long,
-        updateChampionRequest: UpdateChampionRequest
+        updateRequest: UpdateChampionRequest
     ): Optional<ChampionDetailsResponse> {
         val optionalChampion = championRepository.findById(id)
-        return with(optionalChampion) {
-            if (isEmpty) Optional.empty()
-            else {
-                val updatedChampion = with(updateChampionRequest) {
-                    if (!name.isNullOrBlank() && get().name != name && championRepository.existsByName(name!!))
-                        throw UniqueFieldAlreadyExistsException(entity = "champion", field = "name")
-                    Champion(
-                        name = if (name.isNullOrBlank()) get().name else name!!,
-                        shortDescription = if (shortDescription.isNullOrBlank()) get().shortDescription else shortDescription!!,
-                        role = if (role.isNullOrBlank()) get().role else ChampionRole.valueOf(role!!),
-                        difficulty = if (difficulty.isNullOrBlank()) get().difficulty else ChampionDifficulty.valueOf(
-                            difficulty!!
-                        )
-                    )
-                }
-                updatedChampion.id = get().id
-                Optional.of(ChampionDetailsResponse(championRepository.update(updatedChampion)))
+        return if (optionalChampion.isEmpty) Optional.empty()
+        else {
+            with(optionalChampion.get()) {
+                if (!updateRequest.name.isNullOrBlank()
+                    && updateRequest.name != name
+                    && championRepository.existsByName(updateRequest.name!!)
+                ) throw UniqueFieldAlreadyExistsException(entity = "champion", field = "name")
+                if (!updateRequest.name.isNullOrBlank()) name = updateRequest.name!!
+                if (!updateRequest.shortDescription.isNullOrBlank()) shortDescription = updateRequest.shortDescription!!
+                if (!updateRequest.role.isNullOrBlank()) role = ChampionRole.valueOf(updateRequest.role!!.toUpperCase())
+                if (!updateRequest.difficulty.isNullOrBlank()) difficulty = ChampionDifficulty.valueOf(updateRequest.difficulty!!.toUpperCase())
+                Optional.of(ChampionDetailsResponse(this))
             }
         }
     }
 
-    override fun deleteChampion(id: Long) {
-        championRepository.deleteById(id)
-    }
+    @Transactional
+    override fun deleteChampion(id: Long) = championRepository.deleteById(id)
 }

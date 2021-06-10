@@ -10,6 +10,6 @@ interface ChampionService {
 
     fun saveChampion(champion: Champion): ChampionCreatedResponse
     fun getChampion(id: Long): Optional<ChampionDetailsResponse>
-    fun updateChampion(id: Long, updateChampionRequest: UpdateChampionRequest): Optional<ChampionDetailsResponse>
+    fun updateChampion(id: Long, updateRequest: UpdateChampionRequest): Optional<ChampionDetailsResponse>
     fun deleteChampion(id: Long)
 }

@@ -8,19 +8,19 @@ import javax.validation.constraints.Size
 class Champion(
     @field: NotBlank @field:Size(max = 50)
     @Column(unique = true, nullable = false, length = 50)
-    val name: String,
+    var name: String,
 
     @field:NotBlank @field:Size(max = 255)
     @Column(nullable = false, length = 255)
-    val shortDescription: String,
+    var shortDescription: String,
 
     @field:NotBlank
     @Enumerated(EnumType.STRING) @Column(nullable = false)
-    val role: ChampionRole,
+    var role: ChampionRole,
 
     @field:NotBlank
     @Enumerated(EnumType.STRING) @Column(nullable = false)
-    val difficulty: ChampionDifficulty
+    var difficulty: ChampionDifficulty
 ) {
     @Id
     @GeneratedValue
