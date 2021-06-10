@@ -4,7 +4,7 @@ import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 
-class ChampionDetailsResponse(
+data class ChampionDetailsResponse(
     val id: Long?,
     val name: String,
     val shortDescription: String,
