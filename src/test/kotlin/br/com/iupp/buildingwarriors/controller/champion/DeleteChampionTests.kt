@@ -74,11 +74,11 @@ class DeleteChampionTests(
     @Test
     fun `deve retornar status 500 quando Exception inesperada for lancada`() {
         val serviceMock = Mockito.mock(ChampionService::class.java)
-        `when`(serviceMock.getChampion(any(Long::class.java)))
+        `when`(serviceMock.deleteChampion(any(Long::class.java)))
             .thenThrow(RuntimeException())
         val controller = ChampionController(serviceMock, httpHostResolver)
 
-        val response = controller.getChampion(champion.id!!)
+        val response = controller.deleteChampion(champion.id!!)
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.code, response.status.code)
     }
