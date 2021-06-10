@@ -75,22 +75,14 @@ class UpdateChampionTests(
                 header("location")
             )
             with(body()!!) {
-                assertEquals(updateChampionRequest.name, name, championUpdated.name)
-                assertEquals(
-                    updateChampionRequest.shortDescription,
-                    shortDescription,
-                    championUpdated.shortDescription
-                )
-                assertEquals(
-                    updateChampionRequest.role!!.toUpperCase(),
-                    role.toString(),
-                    championUpdated.role.toString()
-                )
-                assertEquals(
-                    updateChampionRequest.difficulty!!.toUpperCase(),
-                    difficulty.toString(),
-                    championUpdated.difficulty.toString()
-                )
+                assertEquals(updateChampionRequest.name, name)
+                assertEquals(updateChampionRequest.name, championUpdated.name)
+                assertEquals(updateChampionRequest.shortDescription, shortDescription)
+                assertEquals(updateChampionRequest.shortDescription, championUpdated.shortDescription)
+                assertEquals(updateChampionRequest.role!!.toUpperCase(), role.toString())
+                assertEquals(updateChampionRequest.role!!.toUpperCase(), championUpdated.role.toString())
+                assertEquals(updateChampionRequest.difficulty!!.toUpperCase(), difficulty.toString())
+                assertEquals(updateChampionRequest.difficulty!!.toUpperCase(), championUpdated.difficulty.toString())
             }
         }
     }
@@ -123,12 +115,14 @@ class UpdateChampionTests(
 
     @Test
     fun `deve retornar status 404 para id inexistente`() {
-        val request = HttpRequest.PUT("/api/v1/champions/2", UpdateChampionRequest(
-            name = "Riven",
-            shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
-            role = "FIGHTER",
-            difficulty = "HIGH"
-        ))
+        val request = HttpRequest.PUT(
+            "/api/v1/champions/2", UpdateChampionRequest(
+                name = "Riven",
+                shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
+                role = "FIGHTER",
+                difficulty = "HIGH"
+            )
+        )
 
         val exception = assertThrows<HttpClientResponseException> {
             championsClient.toBlocking()
@@ -200,7 +194,7 @@ class UpdateChampionTests(
         )
         val httpRequest = HttpRequest.PUT("/api/v1/champions/1", requestBody)
         val exception =
-            controller.updateChampion(httpRequest = httpRequest, id = 1, updateChampionRequest = requestBody,)
+            controller.updateChampion(httpRequest = httpRequest, id = 1, updateChampionRequest = requestBody)
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.code, exception.status.code)
     }
 

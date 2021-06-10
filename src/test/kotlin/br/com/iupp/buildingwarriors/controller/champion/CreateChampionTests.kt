@@ -63,24 +63,19 @@ class CreateChampionTests(
             assertNotNull(body!!.id)
             val championCreated: Champion? = championRepository.findById(body.id!!).orElse(null)
             assertNotNull(championCreated)
-            assertEquals( "${httpHostResolver.resolve(request)}/api/v1/champions/${championCreated!!.id}", header("location"))
+            assertEquals(
+                "${httpHostResolver.resolve(request)}/api/v1/champions/${championCreated!!.id}",
+                header("location")
+            )
             with(body()!!) {
-                assertEquals(createChampionRequestBody.name, name, championCreated.name)
-                assertEquals(
-                    createChampionRequestBody.shortDescription,
-                    shortDescription,
-                    championCreated.shortDescription
-                )
-                assertEquals(
-                    createChampionRequestBody.role!!.toUpperCase(),
-                    role.toString(),
-                    championCreated.role.toString()
-                )
-                assertEquals(
-                    createChampionRequestBody.difficulty!!.toUpperCase(),
-                    difficulty.toString(),
-                    championCreated.difficulty.toString()
-                )
+                assertEquals(createChampionRequestBody.name, name)
+                assertEquals(createChampionRequestBody.name, championCreated.name)
+                assertEquals(createChampionRequestBody.shortDescription, shortDescription)
+                assertEquals(createChampionRequestBody.shortDescription, championCreated.shortDescription)
+                assertEquals(createChampionRequestBody.role!!.toUpperCase(), role.toString())
+                assertEquals(createChampionRequestBody.role!!.toUpperCase(), championCreated.role.toString())
+                assertEquals(createChampionRequestBody.difficulty!!.toUpperCase(), difficulty.toString())
+                assertEquals(createChampionRequestBody.difficulty!!.toUpperCase(), championCreated.difficulty.toString())
             }
         }
     }
