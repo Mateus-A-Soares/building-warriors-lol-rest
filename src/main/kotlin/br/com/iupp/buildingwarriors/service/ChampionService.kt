@@ -12,4 +12,5 @@ interface ChampionService {
     fun getChampion(id: Long): Optional<ChampionDetailsResponse>
     fun updateChampion(id: Long, updateRequest: UpdateChampionRequest): Optional<ChampionDetailsResponse>
     fun deleteChampion(id: Long)
+    fun getAllChampions(): List<ChampionDetailsResponse>
 }

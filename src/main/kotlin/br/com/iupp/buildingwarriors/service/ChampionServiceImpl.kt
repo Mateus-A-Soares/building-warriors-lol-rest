@@ -28,6 +28,10 @@ open class ChampionServiceImpl(@Inject val championRepository: ChampionRepositor
         }
     }
 
+    override fun getAllChampions(): List<ChampionDetailsResponse> {
+        return championRepository.findAll().map { ChampionDetailsResponse(it) }
+    }
+
     @Transactional
     override fun updateChampion(
         id: Long,

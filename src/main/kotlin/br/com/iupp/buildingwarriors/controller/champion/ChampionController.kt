@@ -36,6 +36,15 @@ class ChampionController(
         }
     }
 
+    @Get
+    fun getAllChampions(): HttpResponse<List<ChampionDetailsResponse>> {
+        return try {
+            return HttpResponse.ok(service.getAllChampions())
+        } catch (e: Throwable) {
+            HttpResponse.serverError()
+        }
+    }
+
     @Get("/{id}")
     fun getChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<ChampionDetailsResponse> {
         return try {
