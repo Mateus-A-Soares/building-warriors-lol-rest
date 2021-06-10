@@ -27,15 +27,13 @@ class ChampionServiceImpl(@Inject val championRepository: ChampionRepository) : 
         with(champion) {
             if (isEmpty) return champion
             val updatedChampion = with(updateChampionRequest) {
-                if (!name.isNullOrBlank() && get().name != name && championRepository.existsByName(name))
+                if (!name.isNullOrBlank() && get().name != name && championRepository.existsByName(name!!))
                     throw UniqueFieldAlreadyExistsException(entity = "champion", field = "name")
                 Champion(
-                    name = if (name.isNullOrBlank()) get().name else name,
-                    shortDescription = if (shortDescription.isNullOrBlank()) get().shortDescription else shortDescription,
-                    role = if (role.isNullOrBlank()) get().role else ChampionRole.valueOf(role),
-                    difficulty = if (difficulty.isNullOrBlank()) get().difficulty else ChampionDifficulty.valueOf(
-                        difficulty
-                    )
+                    name = if (name.isNullOrBlank()) get().name else name!!,
+                    shortDescription = if (shortDescription.isNullOrBlank()) get().shortDescription else shortDescription!!,
+                    role = if (role.isNullOrBlank()) get().role else ChampionRole.valueOf(role!!),
+                    difficulty = if (difficulty.isNullOrBlank()) get().difficulty else ChampionDifficulty.valueOf(difficulty!!)
                 )
             }
             updatedChampion.id = get().id

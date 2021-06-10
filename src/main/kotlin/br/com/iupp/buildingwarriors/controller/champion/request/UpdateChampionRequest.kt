@@ -8,11 +8,11 @@ import javax.validation.constraints.Size
 @Introspected
 data class UpdateChampionRequest(
     @field:Size(max = 50)
-    val name: String?,
+    var name: String? = null,
     @field:Size(max = 255)
-    val shortDescription: String?,
+    var shortDescription: String? = null,
     @field:ValidChampionRole
-    val role: String?,
+    var role: String? = null,
     @field:ValidChampionDifficulty
-    val difficulty: String?
+    var difficulty: String? = null
 )

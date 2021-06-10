@@ -63,10 +63,9 @@ class ChampionController(
             with(updatedChampion) {
                 if (isPresent) {
                     val location = "${httpHostResolver.resolve(httpRequest)}/api/v1/champions/${get().id}"
-                    return@with HttpResponse.created(
-                        ChampionDetailsResponse(get()),
+                    return@with HttpResponse.accepted<ChampionDetailsResponse?>(
                         HttpResponse.uri(location)
-                    )
+                    ).body(ChampionDetailsResponse(get()))
                 }
                 return@with HttpResponse.notFound()
             }
