@@ -12,7 +12,6 @@ import io.micronaut.http.annotation.*
 import io.micronaut.http.server.util.HttpHostResolver
 import io.micronaut.validation.Validated
 import javax.inject.Inject
-import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
@@ -29,12 +28,9 @@ class ChampionController(
         @Body @Valid championRequest: CreateChampionRequest
     ): HttpResponse<ChampionCreatedResponse> {
         return try {
-            val championCreated = service.saveChampion(championRequest.toModel())
-            val location = "${httpHostResolver.resolve(httpRequest)}/api/v1/champions/${championCreated.id}"
-            HttpResponse.created(
-                ChampionCreatedResponse(championCreated),
-                HttpResponse.uri(location)
-            )
+            val body = service.saveChampion(championRequest.toModel())
+            val location = "${httpHostResolver.resolve(httpRequest)}/api/v1/champions/${body.id}"
+            HttpResponse.created(body, HttpResponse.uri(location))
         } catch (e: Throwable) {
             HttpResponse.serverError()
         }
@@ -43,10 +39,9 @@ class ChampionController(
     @Get("/{id}")
     fun getChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<ChampionDetailsResponse> {
         return try {
-            val championOptional = service.getChampion(id)
-            with(championOptional) {
-                if (isPresent) return@with HttpResponse.ok(ChampionDetailsResponse(get()))
-                HttpResponse.notFound()
+            with(service.getChampion(id)) {
+                if (isPresent) HttpResponse.ok(get())
+                else HttpResponse.notFound()
             }
         } catch (e: Throwable) {
             HttpResponse.serverError()
@@ -60,15 +55,12 @@ class ChampionController(
         @Body @Valid updateChampionRequest: UpdateChampionRequest
     ): HttpResponse<ChampionDetailsResponse> {
         return try {
-            val updatedChampion = service.updateChampion(id, updateChampionRequest)
-            with(updatedChampion) {
-                if (isPresent) {
+            with(service.updateChampion(id, updateChampionRequest)) {
+                if (isEmpty) HttpResponse.notFound()
+                else {
                     val location = "${httpHostResolver.resolve(httpRequest)}/api/v1/champions/${get().id}"
-                    return@with HttpResponse.accepted<ChampionDetailsResponse?>(
-                        HttpResponse.uri(location)
-                    ).body(ChampionDetailsResponse(get()))
+                    HttpResponse.accepted<ChampionDetailsResponse?>(HttpResponse.uri(location)).body(get())
                 }
-                return@with HttpResponse.notFound()
             }
         } catch (e: UniqueFieldAlreadyExistsException) {
             HttpResponse.unprocessableEntity()
@@ -81,7 +73,7 @@ class ChampionController(
     fun deleteChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<Unit> {
         return try {
             service.deleteChampion(id)
-            return HttpResponse.noContent()
+            HttpResponse.noContent()
         } catch (e: Throwable) {
             HttpResponse.serverError()
         }
