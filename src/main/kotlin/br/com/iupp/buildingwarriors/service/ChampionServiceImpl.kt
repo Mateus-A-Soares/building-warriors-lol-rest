@@ -33,11 +33,17 @@ class ChampionServiceImpl(@Inject val championRepository: ChampionRepository) : 
                     name = if (name.isNullOrBlank()) get().name else name!!,
                     shortDescription = if (shortDescription.isNullOrBlank()) get().shortDescription else shortDescription!!,
                     role = if (role.isNullOrBlank()) get().role else ChampionRole.valueOf(role!!),
-                    difficulty = if (difficulty.isNullOrBlank()) get().difficulty else ChampionDifficulty.valueOf(difficulty!!)
+                    difficulty = if (difficulty.isNullOrBlank()) get().difficulty else ChampionDifficulty.valueOf(
+                        difficulty!!
+                    )
                 )
             }
             updatedChampion.id = get().id
             return Optional.of(championRepository.update(updatedChampion))
         }
+    }
+
+    override fun deleteChampion(id: Long) {
+        championRepository.deleteById(id)
     }
 }

@@ -12,6 +12,7 @@ import io.micronaut.http.annotation.*
 import io.micronaut.http.server.util.HttpHostResolver
 import io.micronaut.validation.Validated
 import javax.inject.Inject
+import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
@@ -71,6 +72,18 @@ class ChampionController(
             }
         } catch (e: UniqueFieldAlreadyExistsException) {
             HttpResponse.unprocessableEntity()
+        } catch (e: Throwable) {
+            HttpResponse.serverError()
+        }
+    }
+
+    @Delete("/{id}")
+    fun deleteChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<Unit> {
+        return try {
+            service.deleteChampion(id)
+            return HttpResponse.noContent()
+        } catch (e: ConstraintViolationException) {
+            HttpResponse.notFound()
         } catch (e: Throwable) {
             HttpResponse.serverError()
         }
