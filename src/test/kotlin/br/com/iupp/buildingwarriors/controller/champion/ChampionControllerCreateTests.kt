@@ -16,7 +16,7 @@ import org.mockito.Mockito.`when`
 
 class ChampionControllerCreateTests {
 
-    val request = HttpRequest.POST(
+    private val request = HttpRequest.POST(
         "/api/v1/champions", CreateChampionRequest(
             name = "Ahri",
             shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
@@ -24,6 +24,7 @@ class ChampionControllerCreateTests {
             difficulty = "MODERATE"
         )
     )
+    private val championId = 1L
 
     @Mock
     private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
@@ -37,11 +38,11 @@ class ChampionControllerCreateTests {
         val controller = ChampionController(service = mockedService, httpHostResolver = mockedHttpHostResolver)
         `when`(mockedHttpHostResolver.resolve(request))
             .thenReturn("http://www.ritogomes:8080")
-        lateinit var champion: Champion
+        lateinit var createRequest: CreateChampionRequest
         val response = request.apply {
-            champion = body.get().toModel()
+            createRequest = body.get()
             `when`(mockedService.saveChampion(any(Champion::class.java)))
-                .thenReturn(ChampionCreatedResponse(champion.apply { id = 1 }))
+                .thenReturn(ChampionCreatedResponse(createRequest.toModel().apply { id = championId }))
         }.run {
             controller.createChampion(this, body.get())
         }
@@ -52,22 +53,23 @@ class ChampionControllerCreateTests {
             assertNotNull(body)
             assertNotNull(body!!.id)
             assertEquals(
-                "${mockedHttpHostResolver.resolve(request)}/api/v1/champions/${champion.id!!}",
+                "${mockedHttpHostResolver.resolve(request)}/api/v1/champions/$championId",
                 header("location")
             )
             with(body()!!) {
-                assertEquals(champion.id, id)
-                assertEquals(champion.name, name)
-                assertEquals(champion.shortDescription, shortDescription)
-                assertEquals(champion.role, role)
-                assertEquals(champion.difficulty, difficulty)
+                assertEquals(championId, id)
+                assertEquals(createRequest.name, name)
+                assertEquals(createRequest.shortDescription, shortDescription)
+                assertEquals(createRequest.role!!.toUpperCase(), role.toString())
+                assertEquals(createRequest.difficulty!!.toUpperCase(), difficulty.toString())
             }
         }
     }
 
     @Test
     fun `deve retornar status 500 quando Exception inesperada for lancada`() {
-        `when`(mockedService.saveChampion(any(Champion::class.java)))
+        val createRequest = request.body.get()
+        `when`(mockedService.saveChampion(createRequest.toModel().apply { id = championId }))
             .thenThrow(RuntimeException())
         val controller = ChampionController(mockedService, mockedHttpHostResolver)
         val exception =

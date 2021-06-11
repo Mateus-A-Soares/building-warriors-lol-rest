@@ -12,14 +12,14 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 
-class DeleteChampionTests {
+class ChampionControllerDeleteTests {
 
     private val champion = Champion(
         name = "Ahri",
         shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
         role = ChampionRole.MAGE,
         difficulty = ChampionDifficulty.MODERATE
-    )
+    ).apply { id = 1 }
 
     @Mock
     private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
@@ -44,6 +44,6 @@ class DeleteChampionTests {
 
         val response = controller.deleteChampion(champion.id!!)
 
-        assertEquals(HttpStatus.NO_CONTENT.code, response.status.code)
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.code, response.status.code)
     }
 }
