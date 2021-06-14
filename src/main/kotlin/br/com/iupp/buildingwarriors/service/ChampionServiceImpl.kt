@@ -1,8 +1,7 @@
 package br.com.iupp.buildingwarriors.service
 
 import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
-import br.com.iupp.buildingwarriors.controller.champion.response.ChampionCreatedResponse
-import br.com.iupp.buildingwarriors.controller.champion.response.ChampionDetailsResponse
+import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
@@ -16,26 +15,26 @@ import javax.transaction.Transactional
 open class ChampionServiceImpl(private val championRepository: ChampionRepository) : ChampionService {
 
     @Transactional
-    override fun saveChampion(champion: Champion): ChampionCreatedResponse =
-        ChampionCreatedResponse(championRepository.save(champion))
+    override fun saveChampion(champion: Champion): ChampionResponse =
+        ChampionResponse(championRepository.save(champion))
 
-    override fun getChampion(id: Long): Optional<ChampionDetailsResponse> {
+    override fun getChampion(id: Long): Optional<ChampionResponse> {
         val optionalChampion = championRepository.findById(id)
         return with(optionalChampion) {
-            if (isPresent) Optional.of(ChampionDetailsResponse(get()))
+            if (isPresent) Optional.of(ChampionResponse(get()))
             else Optional.empty()
         }
     }
 
-    override fun getAllChampions(): List<ChampionDetailsResponse> {
-        return championRepository.findAll().map { ChampionDetailsResponse(it) }
+    override fun getAllChampions(): List<ChampionResponse> {
+        return championRepository.findAll().map { ChampionResponse(it) }
     }
 
     @Transactional
     override fun updateChampion(
         id: Long,
         updateRequest: UpdateChampionRequest
-    ): Optional<ChampionDetailsResponse> {
+    ): Optional<ChampionResponse> {
         val optionalChampion = championRepository.findById(id)
         return if (optionalChampion.isEmpty) Optional.empty()
         else {
@@ -48,7 +47,7 @@ open class ChampionServiceImpl(private val championRepository: ChampionRepositor
                 if (!updateRequest.shortDescription.isNullOrBlank()) shortDescription = updateRequest.shortDescription!!
                 if (!updateRequest.role.isNullOrBlank()) role = ChampionRole.valueOf(updateRequest.role!!.toUpperCase())
                 if (!updateRequest.difficulty.isNullOrBlank()) difficulty = ChampionDifficulty.valueOf(updateRequest.difficulty!!.toUpperCase())
-                Optional.of(ChampionDetailsResponse(this))
+                Optional.of(ChampionResponse(this))
             }
         }
     }

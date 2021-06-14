@@ -2,8 +2,7 @@ package br.com.iupp.buildingwarriors.controller.champion
 
 import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
-import br.com.iupp.buildingwarriors.controller.champion.response.ChampionCreatedResponse
-import br.com.iupp.buildingwarriors.controller.champion.response.ChampionDetailsResponse
+import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException
 import br.com.iupp.buildingwarriors.service.ChampionService
 import io.micronaut.http.HttpRequest
@@ -25,7 +24,7 @@ class ChampionController(
     fun createChampion(
         httpRequest: HttpRequest<ChampionRequest>,
         @Body @Valid championRequest: ChampionRequest
-    ): HttpResponse<ChampionCreatedResponse> {
+    ): HttpResponse<ChampionResponse> {
         return try {
             val body = service.saveChampion(championRequest.toModel())
             val location = "${httpHostResolver.resolve(httpRequest)}/api/v1/champions/${body.id}"
@@ -36,7 +35,7 @@ class ChampionController(
     }
 
     @Get
-    fun getAllChampions(): HttpResponse<List<ChampionDetailsResponse>> {
+    fun getAllChampions(): HttpResponse<List<ChampionResponse>> {
         return try {
             return HttpResponse.ok(service.getAllChampions())
         } catch (e: Throwable) {
@@ -45,7 +44,7 @@ class ChampionController(
     }
 
     @Get("/{id}")
-    fun getChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<ChampionDetailsResponse> {
+    fun getChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<ChampionResponse> {
         return try {
             with(service.getChampion(id)) {
                 if (isPresent) HttpResponse.ok(get())
@@ -61,13 +60,13 @@ class ChampionController(
         httpRequest: HttpRequest<ChampionRequest>,
         @PathVariable @Positive(message = "Deve ser um numero positivo") id: Long,
         @Body @Valid updateChampionRequest: UpdateChampionRequest
-    ): HttpResponse<UpdateChampionRequest> {
+    ): HttpResponse<ChampionResponse> {
         return try {
             with(service.updateChampion(id, updateChampionRequest)) {
                 if (isEmpty) HttpResponse.notFound()
                 else {
                     val location = "${httpHostResolver.resolve(httpRequest)}/api/v1/champions/${get().id}"
-                    HttpResponse.accepted<ChampionDetailsResponse?>(HttpResponse.uri(location)).body(get())
+                    HttpResponse.accepted<ChampionResponse?>(HttpResponse.uri(location)).body(get())
                 }
             }
         } catch (e: UniqueFieldAlreadyExistsException) {

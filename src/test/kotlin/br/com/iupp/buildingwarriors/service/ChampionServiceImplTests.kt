@@ -1,7 +1,7 @@
 package br.com.iupp.buildingwarriors.service
 
 import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
-import br.com.iupp.buildingwarriors.controller.champion.response.ChampionDetailsResponse
+import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
@@ -195,7 +195,7 @@ class ChampionServiceImplTests {
 
         val functionReturn = service.getAllChampions()
 
-        val championsDetailsResponse = champions.map { ChampionDetailsResponse(it) }
+        val championsDetailsResponse = champions.map { ChampionResponse(it) }
         MatcherAssert.assertThat(functionReturn, Matchers.containsInAnyOrder(*championsDetailsResponse.toTypedArray()))
     }
 

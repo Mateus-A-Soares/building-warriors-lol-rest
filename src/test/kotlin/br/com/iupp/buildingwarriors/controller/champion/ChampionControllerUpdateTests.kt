@@ -1,7 +1,7 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
 import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
-import br.com.iupp.buildingwarriors.controller.champion.response.ChampionDetailsResponse
+import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
@@ -28,7 +28,7 @@ class ChampionControllerUpdateTests {
         )
     )
     private val updateResponse = with(updateRequest.body.get()) {
-        ChampionDetailsResponse(
+        ChampionResponse(
             id = championId,
             name = name!!,
             shortDescription = shortDescription!!,

@@ -1,6 +1,6 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
-import br.com.iupp.buildingwarriors.controller.champion.response.ChampionDetailsResponse
+import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.service.ChampionService
@@ -15,7 +15,7 @@ import java.util.*
 
 class ChampionControllerGetTests {
 
-    private val championResponse = ChampionDetailsResponse(
+    private val championResponse = ChampionResponse(
         id = 1,
         name = "Ahri",
         shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",

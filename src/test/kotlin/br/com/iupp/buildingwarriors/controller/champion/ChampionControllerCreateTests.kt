@@ -1,7 +1,7 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
 import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
-import br.com.iupp.buildingwarriors.controller.champion.response.ChampionCreatedResponse
+import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.service.ChampionService
 import io.micronaut.http.HttpRequest
@@ -39,7 +39,7 @@ class ChampionControllerCreateTests {
         val response = request.apply {
             createRequest = body.get()
             `when`(mockedService.saveChampion(any(Champion::class.java)))
-                .thenReturn(ChampionCreatedResponse(createRequest.toModel().apply { id = championId }))
+                .thenReturn(ChampionResponse(createRequest.toModel().apply { id = championId }))
         }.run {
             controller.createChampion(this, body.get())
         }
