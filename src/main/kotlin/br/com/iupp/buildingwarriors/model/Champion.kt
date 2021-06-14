@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
 @Entity
-class Champion(
+data class Champion(
     @field: NotBlank @field:Size(max = 50)
     @Column(unique = true, nullable = false, length = 50)
     var name: String,
@@ -20,22 +20,9 @@ class Champion(
 
     @field:NotBlank
     @Enumerated(EnumType.STRING) @Column(nullable = false)
-    var difficulty: ChampionDifficulty
-) {
+    var difficulty: ChampionDifficulty,
+
     @Id
     @GeneratedValue
     var id : Long? = null
-}
-
-enum class ChampionDifficulty {
-    LOW, MODERATE, HIGH
-}
-
-enum class ChampionRole {
-    ASSASSIN,
-    FIGHTER,
-    MAGE,
-    MARKSMAN,
-    SUPPORT,
-    TANK
-}
+)
