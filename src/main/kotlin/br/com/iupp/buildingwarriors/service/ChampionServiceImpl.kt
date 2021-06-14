@@ -9,12 +9,11 @@ import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.repository.ChampionRepository
 import java.util.*
-import javax.inject.Inject
 import javax.inject.Singleton
 import javax.transaction.Transactional
 
 @Singleton
-open class ChampionServiceImpl(@Inject val championRepository: ChampionRepository) : ChampionService {
+open class ChampionServiceImpl(private val championRepository: ChampionRepository) : ChampionService {
 
     @Transactional
     override fun saveChampion(champion: Champion): ChampionCreatedResponse =

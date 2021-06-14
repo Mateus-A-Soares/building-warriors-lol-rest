@@ -10,7 +10,6 @@ import io.micronaut.http.server.util.HttpHostResolver
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 
@@ -26,10 +25,8 @@ class ChampionControllerCreateTests {
     )
     private val championId = 1L
 
-    @Mock
     private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
 
-    @Mock
     private val mockedHttpHostResolver: HttpHostResolver = Mockito.mock(HttpHostResolver::class.java)
 
 

@@ -13,14 +13,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import java.util.*
 
 class ChampionServiceImplTests {
 
-    @Mock
     private val mockedRepository: ChampionRepository = Mockito.mock(ChampionRepository::class.java)
 
     private val service = ChampionServiceImpl(mockedRepository)

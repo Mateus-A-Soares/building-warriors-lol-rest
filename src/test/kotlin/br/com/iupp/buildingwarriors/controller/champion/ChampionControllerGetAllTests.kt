@@ -10,7 +10,6 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
 import org.mockito.Mockito
 
 class ChampionControllerGetAllTests {
@@ -58,10 +57,8 @@ class ChampionControllerGetAllTests {
         )
     )
 
-    @Mock
     private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
 
-    @Mock
     private val mockedHttpHostResolver: HttpHostResolver = Mockito.mock(HttpHostResolver::class.java)
 
     @Test

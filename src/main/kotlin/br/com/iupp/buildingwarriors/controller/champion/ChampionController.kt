@@ -11,15 +11,14 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.*
 import io.micronaut.http.server.util.HttpHostResolver
 import io.micronaut.validation.Validated
-import javax.inject.Inject
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 @Controller("\${api.path}/champions")
 @Validated
 class ChampionController(
-    @Inject private val service: ChampionService,
-    @Inject private val httpHostResolver: HttpHostResolver
+    private val service: ChampionService,
+    private val httpHostResolver: HttpHostResolver
 ) {
 
     @Post

@@ -8,7 +8,6 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.server.util.HttpHostResolver
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 
@@ -21,10 +20,8 @@ class ChampionControllerDeleteTests {
         difficulty = ChampionDifficulty.MODERATE
     ).apply { id = 1 }
 
-    @Mock
     private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
 
-    @Mock
     private val mockedHttpHostResolver: HttpHostResolver = Mockito.mock(HttpHostResolver::class.java)
 
     @Test

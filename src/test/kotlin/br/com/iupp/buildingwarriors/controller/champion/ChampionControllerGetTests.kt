@@ -1,18 +1,14 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionDetailsResponse
-import br.com.iupp.buildingwarriors.controller.champion.response.ConstraintErrorDto
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.service.ChampionService
-import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.server.util.HttpHostResolver
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import java.util.*
@@ -27,10 +23,8 @@ class ChampionControllerGetTests {
         difficulty = ChampionDifficulty.MODERATE
     )
 
-    @Mock
     private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
 
-    @Mock
     private val mockedHttpHostResolver: HttpHostResolver = Mockito.mock(HttpHostResolver::class.java)
 
     @Test
@@ -68,7 +62,7 @@ class ChampionControllerGetTests {
 
     @Test
     fun `deve retornar HttpResponse com status 500 quando ocorrer exception inesperada`() {
-        Mockito.`when`(mockedService.getChampion(championResponse.id!!))
+        `when`(mockedService.getChampion(championResponse.id!!))
             .thenThrow(RuntimeException())
         val controller = ChampionController(service = mockedService, httpHostResolver = mockedHttpHostResolver)
 
