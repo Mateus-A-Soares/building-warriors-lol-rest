@@ -1,4 +1,4 @@
-package br.com.iupp.buildingwarriors.constraints
+package br.com.iupp.buildingwarriors.util.validator
 
 import br.com.iupp.buildingwarriors.repository.ChampionRepository
 import io.micronaut.core.annotation.AnnotationValue
@@ -26,7 +26,7 @@ annotation class UniqueChampionName(
 )
 
 @Singleton
-private class UniqueChampionNameValidator(@Inject val championRepository: ChampionRepository) :
+private class UniqueChampionNameValidator(private val championRepository: ChampionRepository) :
     ConstraintValidator<UniqueChampionName, String> {
 
     override fun isValid(

@@ -1,7 +1,7 @@
 package br.com.iupp.buildingwarriors.controller.champion.request
 
-import br.com.iupp.buildingwarriors.constraints.ValidChampionDifficulty
-import br.com.iupp.buildingwarriors.constraints.ValidChampionRole
+import br.com.iupp.buildingwarriors.util.validator.ValidChampionDifficulty
+import br.com.iupp.buildingwarriors.util.validator.ValidChampionRole
 import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.Size
 

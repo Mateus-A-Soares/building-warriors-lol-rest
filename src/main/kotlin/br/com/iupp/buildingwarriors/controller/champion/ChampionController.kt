@@ -57,7 +57,7 @@ class ChampionController(
 
     @Put("/{id}")
     fun updateChampion(
-        httpRequest: HttpRequest<ChampionRequest>,
+        httpRequest: HttpRequest<UpdateChampionRequest>,
         @PathVariable @Positive(message = "Deve ser um numero positivo") id: Long,
         @Body @Valid updateChampionRequest: UpdateChampionRequest
     ): HttpResponse<ChampionResponse> {

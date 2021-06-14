@@ -1,8 +1,8 @@
 package br.com.iupp.buildingwarriors.controller.champion.request
 
-import br.com.iupp.buildingwarriors.constraints.UniqueChampionName
-import br.com.iupp.buildingwarriors.constraints.ValidChampionDifficulty
-import br.com.iupp.buildingwarriors.constraints.ValidChampionRole
+import br.com.iupp.buildingwarriors.util.validator.UniqueChampionName
+import br.com.iupp.buildingwarriors.util.validator.ValidChampionDifficulty
+import br.com.iupp.buildingwarriors.util.validator.ValidChampionRole
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole

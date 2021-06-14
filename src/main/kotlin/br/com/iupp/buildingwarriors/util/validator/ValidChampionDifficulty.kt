@@ -1,4 +1,4 @@
-package br.com.iupp.buildingwarriors.constraints
+package br.com.iupp.buildingwarriors.util.validator
 
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import io.micronaut.core.annotation.AnnotationValue
