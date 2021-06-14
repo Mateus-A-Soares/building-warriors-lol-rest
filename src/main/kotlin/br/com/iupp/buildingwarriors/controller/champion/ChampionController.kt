@@ -1,7 +1,6 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
 import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
-import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.controller.handler.response.DefaultErrorResponse
 import br.com.iupp.buildingwarriors.service.ChampionService
@@ -26,7 +25,7 @@ class ChampionController(
         httpRequest: HttpRequest<ChampionRequest>,
         @Body @Valid championRequest: ChampionRequest
     ): HttpResponse<ChampionResponse> {
-        val body = service.saveChampion(championRequest.toModel())
+        val body = service.saveChampion(championRequest)
         val location = "${httpRequest.path}/${body.id}"
         return HttpResponse.created(body, HttpResponse.uri(location))
     }
@@ -44,10 +43,10 @@ class ChampionController(
 
     @Put("/{id}")
     fun updateChampion(
-        httpRequest: HttpRequest<UpdateChampionRequest>,
-        @PathVariable @Positive(message = "Deve ser um numero positivo") id: Long,
-        @Body @Valid updateChampionRequest: UpdateChampionRequest
-    ): HttpResponse<ChampionResponse> = with(service.updateChampion(id, updateChampionRequest)) {
+        httpRequest: HttpRequest<ChampionRequest>,
+        @Valid @Body championRequest: ChampionRequest,
+        @PathVariable @Positive(message = "Deve ser um numero positivo") id: Long
+    ): HttpResponse<ChampionResponse> = with(service.updateChampion(id, championRequest)) {
         if (isEmpty) HttpResponse.notFound()
         else {
             val location = "${httpRequest.path}/${get().id}"

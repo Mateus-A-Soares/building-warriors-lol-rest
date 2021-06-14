@@ -1,7 +1,8 @@
 package br.com.iupp.buildingwarriors.service
 
-import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
+import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
+import br.com.iupp.buildingwarriors.exception.FieldConstraintException
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
@@ -15,8 +16,10 @@ import javax.transaction.Transactional
 open class ChampionServiceImpl(private val championRepository: ChampionRepository) : ChampionService {
 
     @Transactional
-    override fun saveChampion(champion: Champion): ChampionResponse =
-        ChampionResponse(championRepository.save(champion))
+    override fun saveChampion(request: ChampionRequest): ChampionResponse {
+        val champion = request.toModel(championRepository)
+        return ChampionResponse(championRepository.save(champion))
+    }
 
     override fun getChampion(id: Long): Optional<ChampionResponse> {
         val optionalChampion = championRepository.findById(id)
@@ -33,20 +36,20 @@ open class ChampionServiceImpl(private val championRepository: ChampionRepositor
     @Transactional
     override fun updateChampion(
         id: Long,
-        updateRequest: UpdateChampionRequest
+        request: ChampionRequest
     ): Optional<ChampionResponse> {
         val optionalChampion = championRepository.findById(id)
         return if (optionalChampion.isEmpty) Optional.empty()
         else {
             with(optionalChampion.get()) {
-                if (!updateRequest.name.isNullOrBlank()
-                    && updateRequest.name != name
-                    && championRepository.existsByName(updateRequest.name!!)
+                if (!request.name.isNullOrBlank()
+                    && request.name != name
+                    && championRepository.existsByName(request.name!!)
                 ) throw UniqueFieldAlreadyExistsException(entity = "champion", field = "name")
-                if (!updateRequest.name.isNullOrBlank()) name = updateRequest.name!!
-                if (!updateRequest.shortDescription.isNullOrBlank()) shortDescription = updateRequest.shortDescription!!
-                if (!updateRequest.role.isNullOrBlank()) role = ChampionRole.valueOf(updateRequest.role!!.toUpperCase())
-                if (!updateRequest.difficulty.isNullOrBlank()) difficulty = ChampionDifficulty.valueOf(updateRequest.difficulty!!.toUpperCase())
+                if (!request.name.isNullOrBlank()) name = request.name!!
+                if (!request.shortDescription.isNullOrBlank()) shortDescription = request.shortDescription!!
+                if (!request.role.isNullOrBlank()) role = ChampionRole.valueOf(request.role!!.toUpperCase())
+                if (!request.difficulty.isNullOrBlank()) difficulty = ChampionDifficulty.valueOf(request.difficulty!!.toUpperCase())
                 Optional.of(ChampionResponse(this))
             }
         }

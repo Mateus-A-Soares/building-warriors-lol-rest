@@ -1,6 +1,7 @@
 package br.com.iupp.buildingwarriors.controller.handler
 
 import br.com.iupp.buildingwarriors.controller.handler.response.DefaultErrorResponse
+import br.com.iupp.buildingwarriors.exception.FieldConstraintException
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException
 import io.micronaut.context.annotation.Requires
 import io.micronaut.http.HttpRequest
@@ -25,7 +26,16 @@ class ExceptionHandler : ExceptionHandler<Throwable, HttpResponse<DefaultErrorRe
                     path = request.path
                 )
             )
+            is FieldConstraintException -> HttpResponse.unprocessableEntity<DefaultErrorResponse>().body(
+                DefaultErrorResponse(
+                    statusCode = HttpStatus.UNPROCESSABLE_ENTITY.code,
+                    error = HttpStatus.UNPROCESSABLE_ENTITY.reason,
+                    messages = exception.fieldErrors.map { "${it.first}: ${it.second}" },
+                    path = request.path
+                )
+            )
             else -> {
+                exception.printStackTrace()
                 HttpResponse.serverError<DefaultErrorResponse>().body(
                     DefaultErrorResponse(
                         statusCode = HttpStatus.INTERNAL_SERVER_ERROR.code,
