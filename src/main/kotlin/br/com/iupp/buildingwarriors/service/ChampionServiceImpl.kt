@@ -2,9 +2,7 @@ package br.com.iupp.buildingwarriors.service
 
 import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
-import br.com.iupp.buildingwarriors.exception.FieldConstraintException
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException
-import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.repository.ChampionRepository
@@ -16,8 +14,8 @@ import javax.transaction.Transactional
 open class ChampionServiceImpl(private val championRepository: ChampionRepository) : ChampionService {
 
     @Transactional
-    override fun saveChampion(request: ChampionRequest): ChampionResponse {
-        val champion = request.toModel(championRepository)
+    override fun saveChampion(championRequest: ChampionRequest): ChampionResponse {
+        val champion = championRequest.toModel(championRepository)
         return ChampionResponse(championRepository.save(champion))
     }
 
@@ -36,20 +34,20 @@ open class ChampionServiceImpl(private val championRepository: ChampionRepositor
     @Transactional
     override fun updateChampion(
         id: Long,
-        request: ChampionRequest
+        championRequest: ChampionRequest
     ): Optional<ChampionResponse> {
         val optionalChampion = championRepository.findById(id)
         return if (optionalChampion.isEmpty) Optional.empty()
         else {
             with(optionalChampion.get()) {
-                if (!request.name.isNullOrBlank()
-                    && request.name != name
-                    && championRepository.existsByName(request.name!!)
+                if (!championRequest.name.isNullOrBlank()
+                    && championRequest.name != name
+                    && championRepository.existsByName(championRequest.name)
                 ) throw UniqueFieldAlreadyExistsException(entity = "champion", field = "name")
-                if (!request.name.isNullOrBlank()) name = request.name!!
-                if (!request.shortDescription.isNullOrBlank()) shortDescription = request.shortDescription!!
-                if (!request.role.isNullOrBlank()) role = ChampionRole.valueOf(request.role!!.toUpperCase())
-                if (!request.difficulty.isNullOrBlank()) difficulty = ChampionDifficulty.valueOf(request.difficulty!!.toUpperCase())
+                if (!championRequest.name.isNullOrBlank()) name = championRequest.name
+                if (!championRequest.shortDescription.isNullOrBlank()) shortDescription = championRequest.shortDescription
+                if (!championRequest.role.isNullOrBlank()) role = ChampionRole.valueOf(championRequest.role.toUpperCase())
+                if (!championRequest.difficulty.isNullOrBlank()) difficulty = ChampionDifficulty.valueOf(championRequest.difficulty.toUpperCase())
                 Optional.of(ChampionResponse(this))
             }
         }

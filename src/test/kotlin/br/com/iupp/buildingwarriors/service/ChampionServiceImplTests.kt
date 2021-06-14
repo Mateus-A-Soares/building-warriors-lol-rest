@@ -1,6 +1,6 @@
 package br.com.iupp.buildingwarriors.service
 
-import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
+import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException
 import br.com.iupp.buildingwarriors.model.Champion
@@ -25,22 +25,32 @@ class ChampionServiceImplTests {
 
     @Test
     fun `deve cadastrar champion`() {
-        val champion = Champion(
+        val request = ChampionRequest(
             name = "Ahri",
             shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
-            role = ChampionRole.MAGE,
-            difficulty = ChampionDifficulty.MODERATE
+            role = ChampionRole.MAGE.toString(),
+            difficulty = ChampionDifficulty.MODERATE.toString()
         )
-        `when`(mockedRepository.save(champion)).thenReturn(champion.apply { id = 1 })
+        val championId = 1L
+        `when`(mockedRepository.save(request.toModel(mockedRepository)))
+            .thenReturn(with(request) {
+                Champion(
+                    id = championId,
+                    name = name!!,
+                    shortDescription = shortDescription!!,
+                    role = ChampionRole.valueOf(role!!),
+                    difficulty = ChampionDifficulty.valueOf(difficulty!!)
+                )
+            })
 
-        val serviceResponse = service.saveChampion(champion)
+        val serviceResponse = service.saveChampion(request)
 
         with(serviceResponse) {
-            assertEquals(1, id)
-            assertEquals(champion.name, name)
-            assertEquals(champion.shortDescription, shortDescription)
-            assertEquals(champion.role, role)
-            assertEquals(champion.difficulty, difficulty)
+            assertEquals(championId, id)
+            assertEquals(request.name, name)
+            assertEquals(request.shortDescription, shortDescription)
+            assertEquals(ChampionRole.valueOf(request.role!!), role)
+            assertEquals(ChampionDifficulty.valueOf(request.difficulty!!), difficulty)
         }
     }
 
@@ -85,7 +95,7 @@ class ChampionServiceImplTests {
             role = ChampionRole.MAGE,
             difficulty = ChampionDifficulty.MODERATE
         ).apply { id = 1 }
-        val updateRequest = UpdateChampionRequest(
+        val updateRequest = ChampionRequest(
             name = "Riven",
             shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
             role = "FIGHTER",
@@ -120,7 +130,7 @@ class ChampionServiceImplTests {
 
     @Test
     fun `deve retornar optional vazio quando nao encontrar champion para atualizar`() {
-        val updateRequest = UpdateChampionRequest(
+        val updateRequest = ChampionRequest(
             name = "Riven",
             shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
             role = "FIGHTER",
@@ -141,7 +151,7 @@ class ChampionServiceImplTests {
             role = ChampionRole.MAGE,
             difficulty = ChampionDifficulty.MODERATE
         ).apply { id = 1 }
-        val updateRequest = UpdateChampionRequest(name = "Riven")
+        val updateRequest = ChampionRequest(name = "Riven")
         `when`(mockedRepository.findById(1)).thenReturn(Optional.of(champion))
         `when`(mockedRepository.existsByName(updateRequest.name!!)).thenReturn(true)
         val exception = assertThrows<UniqueFieldAlreadyExistsException> {

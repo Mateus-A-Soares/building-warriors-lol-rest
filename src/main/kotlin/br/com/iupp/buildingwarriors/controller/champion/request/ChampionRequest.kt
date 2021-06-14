@@ -13,13 +13,13 @@ import javax.validation.constraints.Size
 @Introspected
 data class ChampionRequest(
     @field:Size(max = 50)
-    val name: String?,
+    val name: String? = null,
     @field:Size(max = 255)
-    val shortDescription: String?,
+    val shortDescription: String? = null,
     @field:ValidChampionRole
-    val role: String?,
+    val role: String? = null,
     @field:ValidChampionDifficulty
-    val difficulty: String?
+    val difficulty: String? = null
 ) {
 
     fun toModel(repository: ChampionRepository): Champion {

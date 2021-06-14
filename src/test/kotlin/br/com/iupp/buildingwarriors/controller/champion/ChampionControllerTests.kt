@@ -1,7 +1,6 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
 import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
-import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
@@ -91,9 +90,18 @@ class ChampionControllerTests {
         )
         val createRequest: ChampionRequest = request.body.get()
         val championId = 1L
-        Mockito.`when`(mockedService.saveChampion(any(Champion::class.java)))
-            .thenReturn(ChampionResponse(createRequest.toModel().apply { id = championId }))
-
+        request.body.get().apply {
+            Mockito.`when`(mockedService.saveChampion(this))
+                .thenReturn(
+                    ChampionResponse(
+                            id = championId,
+                            name = name!!,
+                            shortDescription = shortDescription!!,
+                            role = ChampionRole.valueOf(role!!),
+                            difficulty = ChampionDifficulty.valueOf(difficulty!!)
+                    )
+                )
+        }
         val response = controller.createChampion(request, createRequest)
 
         with(response) {
@@ -162,7 +170,7 @@ class ChampionControllerTests {
             role = ChampionRole.FIGHTER,
             difficulty = ChampionDifficulty.HIGH
         )
-        val updateRequest = UpdateChampionRequest(
+        val updateRequest = ChampionRequest(
             name = champion.name,
             shortDescription = champion.shortDescription,
             role = champion.role.toString(),
@@ -174,7 +182,7 @@ class ChampionControllerTests {
 
         val response = controller.updateChampion(
             httpRequest = HttpRequest.PUT("/api/v1/champions/${champion.id}", updateRequest),
-            updateChampionRequest = updateRequest,
+            championRequest = updateRequest,
             id = champion.id!!
         )
 
@@ -187,7 +195,7 @@ class ChampionControllerTests {
 
     @Test
     fun `deve retornar status 404 para update de id inexistente`() {
-        var updateRequest = UpdateChampionRequest(
+        var updateRequest = ChampionRequest(
             name = "Riven",
             shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
             role = "FIGHTER",
@@ -201,11 +209,9 @@ class ChampionControllerTests {
             controller.updateChampion(
                 id = 2,
                 httpRequest = HttpRequest.PUT("/api/v1/champions/${2}", updateRequest),
-                updateChampionRequest = updateRequest
+                championRequest = updateRequest
             )
 
         assertEquals(HttpStatus.NOT_FOUND.code, response.status.code)
     }
-
-    private fun <T> any(type: Class<T>): T = Mockito.any(type)
 }
