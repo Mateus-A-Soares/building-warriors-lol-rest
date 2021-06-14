@@ -9,7 +9,6 @@ import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.*
-import io.micronaut.http.server.util.HttpHostResolver
 import io.micronaut.validation.Validated
 import javax.validation.ConstraintViolationException
 import javax.validation.Valid
@@ -19,8 +18,7 @@ import javax.validation.constraints.Positive
 @Controller("\${api.path}/champions")
 @Validated
 class ChampionController(
-    private val service: ChampionService,
-    private val httpHostResolver: HttpHostResolver
+    private val service: ChampionService
 ) {
 
     @Post
@@ -29,7 +27,7 @@ class ChampionController(
         @Body @Valid championRequest: ChampionRequest
     ): HttpResponse<ChampionResponse> {
         val body = service.saveChampion(championRequest.toModel())
-        val location = "${httpHostResolver.resolve(httpRequest)}/api/v1/champions/${body.id}"
+        val location = "${httpRequest.path}/${body.id}"
         return HttpResponse.created(body, HttpResponse.uri(location))
     }
 
@@ -52,7 +50,7 @@ class ChampionController(
     ): HttpResponse<ChampionResponse> = with(service.updateChampion(id, updateChampionRequest)) {
         if (isEmpty) HttpResponse.notFound()
         else {
-            val location = "${httpHostResolver.resolve(httpRequest)}/api/v1/champions/${get().id}"
+            val location = "${httpRequest.path}/${get().id}"
             HttpResponse.accepted<ChampionResponse?>(HttpResponse.uri(location)).body(get())
         }
     }
@@ -64,15 +62,20 @@ class ChampionController(
     }
 
     @Error(exception = ConstraintViolationException::class)
-    fun constraintException(request: HttpRequest<*>, exception: ConstraintViolationException): HttpResponse<DefaultErrorResponse> {
+    fun constraintExceptionHandler(
+        request: HttpRequest<*>,
+        exception: ConstraintViolationException
+    ): HttpResponse<DefaultErrorResponse> {
         val messages = exception.constraintViolations.map {
-            "${it.propertyPath}: ${it.message}"
+            "${it.propertyPath.last()}: ${it.message}"
         }
-        return HttpResponse.unprocessableEntity<DefaultErrorResponse>().body(DefaultErrorResponse(
-            statusCode = HttpStatus.UNPROCESSABLE_ENTITY.code,
-            messages = messages,
-            path = request.path,
-            error = HttpStatus.UNPROCESSABLE_ENTITY.reason
-        ))
+        return HttpResponse.unprocessableEntity<DefaultErrorResponse>().body(
+            DefaultErrorResponse(
+                statusCode = HttpStatus.UNPROCESSABLE_ENTITY.code,
+                messages = messages,
+                path = request.path,
+                error = HttpStatus.UNPROCESSABLE_ENTITY.reason
+            )
+        )
     }
 }

@@ -11,7 +11,7 @@ open class DefaultErrorResponse(
     timestamp: LocalDateTime = LocalDateTime.now()
 ) {
     companion object {
-        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:MM:ss")
     }
 
     val timestamp = formatter.format(timestamp)
