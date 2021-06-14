@@ -6,11 +6,13 @@ import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.service.ChampionService
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.server.util.HttpHostResolver
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 
+@MicronautTest
 class ChampionControllerDeleteTests {
 
     private val champion = Champion(
@@ -22,25 +24,12 @@ class ChampionControllerDeleteTests {
 
     private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
 
-    private val mockedHttpHostResolver: HttpHostResolver = Mockito.mock(HttpHostResolver::class.java)
-
     @Test
     fun `deve deletar champion existente`() {
-        val controller = ChampionController(mockedService, mockedHttpHostResolver)
+        val controller = ChampionController(mockedService)
 
         val response = controller.deleteChampion(champion.id!!)
 
         assertEquals(HttpStatus.NO_CONTENT.code, response.status.code)
-    }
-
-    @Test
-    fun `deve retornar status 500 quando Exception inesperada for lancada`() {
-        `when`(mockedService.deleteChampion(champion.id!!))
-            .thenThrow(RuntimeException())
-        val controller = ChampionController(mockedService, mockedHttpHostResolver)
-
-        val response = controller.deleteChampion(champion.id!!)
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.code, response.status.code)
     }
 }

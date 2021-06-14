@@ -5,13 +5,14 @@ import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.service.ChampionService
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.server.util.HttpHostResolver
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 
+@MicronautTest
 class ChampionControllerGetAllTests {
 
     private var champions: List<ChampionResponse> = listOf(
@@ -59,13 +60,11 @@ class ChampionControllerGetAllTests {
 
     private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
 
-    private val mockedHttpHostResolver: HttpHostResolver = Mockito.mock(HttpHostResolver::class.java)
-
     @Test
     fun `deve encontrar todos champions cadastrados`() {
         Mockito.`when`(mockedService.getAllChampions())
             .thenReturn(champions)
-        val controller = ChampionController(service = mockedService, httpHostResolver = mockedHttpHostResolver)
+        val controller = ChampionController(service = mockedService)
 
         val response = controller.getAllChampions()
 
@@ -73,16 +72,5 @@ class ChampionControllerGetAllTests {
             assertEquals(HttpStatus.OK.code, status.code)
             assertThat(body(), containsInAnyOrder(*champions.toTypedArray()))
         }
-    }
-
-    @Test
-    fun `deve retornar HttpResponse com status 500 quando ocorrer exception inesperada`() {
-        Mockito.`when`(mockedService.getAllChampions())
-            .thenThrow(RuntimeException())
-        val controller = ChampionController(service = mockedService, httpHostResolver = mockedHttpHostResolver)
-
-        val response = controller.getAllChampions()
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.code, response.status.code)
     }
 }

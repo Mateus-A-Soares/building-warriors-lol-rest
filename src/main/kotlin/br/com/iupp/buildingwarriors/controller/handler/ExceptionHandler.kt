@@ -26,7 +26,6 @@ class ExceptionHandler : ExceptionHandler<Throwable, HttpResponse<DefaultErrorRe
                 )
             )
             else -> {
-                exception.printStackTrace()
                 HttpResponse.serverError<DefaultErrorResponse>().body(
                     DefaultErrorResponse(
                         statusCode = HttpStatus.INTERNAL_SERVER_ERROR.code,
