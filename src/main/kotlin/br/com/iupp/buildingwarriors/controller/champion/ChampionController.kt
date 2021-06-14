@@ -1,6 +1,6 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
-import br.com.iupp.buildingwarriors.controller.champion.request.CreateChampionRequest
+import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.request.UpdateChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionCreatedResponse
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionDetailsResponse
@@ -23,8 +23,8 @@ class ChampionController(
 
     @Post
     fun createChampion(
-        httpRequest: HttpRequest<CreateChampionRequest>,
-        @Body @Valid championRequest: CreateChampionRequest
+        httpRequest: HttpRequest<ChampionRequest>,
+        @Body @Valid championRequest: ChampionRequest
     ): HttpResponse<ChampionCreatedResponse> {
         return try {
             val body = service.saveChampion(championRequest.toModel())
@@ -58,10 +58,10 @@ class ChampionController(
 
     @Put("/{id}")
     fun updateChampion(
-        httpRequest: HttpRequest<UpdateChampionRequest>,
+        httpRequest: HttpRequest<ChampionRequest>,
         @PathVariable @Positive(message = "Deve ser um numero positivo") id: Long,
         @Body @Valid updateChampionRequest: UpdateChampionRequest
-    ): HttpResponse<ChampionDetailsResponse> {
+    ): HttpResponse<UpdateChampionRequest> {
         return try {
             with(service.updateChampion(id, updateChampionRequest)) {
                 if (isEmpty) HttpResponse.notFound()

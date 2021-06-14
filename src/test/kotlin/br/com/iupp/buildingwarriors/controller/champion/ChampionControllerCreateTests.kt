@@ -1,6 +1,6 @@
 package br.com.iupp.buildingwarriors.controller.champion
 
-import br.com.iupp.buildingwarriors.controller.champion.request.CreateChampionRequest
+import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionCreatedResponse
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.service.ChampionService
@@ -16,7 +16,7 @@ import org.mockito.Mockito.`when`
 class ChampionControllerCreateTests {
 
     private val request = HttpRequest.POST(
-        "/api/v1/champions", CreateChampionRequest(
+        "/api/v1/champions", ChampionRequest(
             name = "Ahri",
             shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
             role = "MAGE",
@@ -35,7 +35,7 @@ class ChampionControllerCreateTests {
         val controller = ChampionController(service = mockedService, httpHostResolver = mockedHttpHostResolver)
         `when`(mockedHttpHostResolver.resolve(request))
             .thenReturn("http://www.ritogomes:8080")
-        lateinit var createRequest: CreateChampionRequest
+        lateinit var createRequest: ChampionRequest
         val response = request.apply {
             createRequest = body.get()
             `when`(mockedService.saveChampion(any(Champion::class.java)))
