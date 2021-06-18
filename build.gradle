@@ -20,7 +20,7 @@ repositories {
 
 micronaut {
     runtime("netty")
-    testRuntime("junit5")
+    testRuntime("kotest")
     processing {
         incremental(true)
         annotations("br.com.iupp.buildingwarriors.*")
@@ -42,10 +42,6 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     implementation("io.micronaut:micronaut-validation")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("org.mockito:mockito-core")
-    testImplementation("org.mockito:mockito-inline:3.11.0")
 }
 
 

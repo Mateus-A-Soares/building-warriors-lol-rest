@@ -7,50 +7,42 @@ import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.repository.ChampionRepository
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito
-import org.mockito.Mockito.`when`
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.AnnotationSpec
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.shouldBe
+import io.micronaut.test.extensions.kotest.annotation.MicronautTest
+import io.mockk.every
+import io.mockk.mockk
 import java.util.*
 
-class ChampionServiceImplTests {
+@MicronautTest
+class ChampionServiceImplTest : AnnotationSpec() {
 
-    private val mockedRepository: ChampionRepository = Mockito.mock(ChampionRepository::class.java)
+    private val mockedRepository = mockk<ChampionRepository>()
 
     private val service = ChampionServiceImpl(mockedRepository)
 
     @Test
     fun `deve cadastrar champion`() {
-        val request = ChampionRequest(
+        val championId = 1L
+        val champion = Champion(
             name = "Ahri",
             shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
-            role = ChampionRole.MAGE.toString(),
-            difficulty = ChampionDifficulty.MODERATE.toString()
-        )
-        val championId = 1L
-        `when`(mockedRepository.save(request.toModel(mockedRepository)))
-            .thenReturn(with(request) {
-                Champion(
-                    id = championId,
-                    name = name!!,
-                    shortDescription = shortDescription!!,
-                    role = ChampionRole.valueOf(role!!),
-                    difficulty = ChampionDifficulty.valueOf(difficulty!!)
-                )
-            })
+            role = ChampionRole.MAGE,
+            difficulty = ChampionDifficulty.MODERATE)
+        val request = mockk<ChampionRequest>()
+        every { request.toModel(mockedRepository) } returns champion.apply { id = championId }
+        every { mockedRepository.save(champion) } returns champion
 
         val serviceResponse = service.saveChampion(request)
 
         with(serviceResponse) {
-            assertEquals(championId, id)
-            assertEquals(request.name, name)
-            assertEquals(request.shortDescription, shortDescription)
-            assertEquals(ChampionRole.valueOf(request.role!!), role)
-            assertEquals(ChampionDifficulty.valueOf(request.difficulty!!), difficulty)
+            championId shouldBe id
+            champion.name shouldBe name
+            champion.shortDescription shouldBe shortDescription
+            champion.role shouldBe role
+            champion.difficulty shouldBe difficulty
         }
     }
 
@@ -62,29 +54,28 @@ class ChampionServiceImplTests {
             role = ChampionRole.MAGE,
             difficulty = ChampionDifficulty.MODERATE
         ).apply { id = 1 }
-        `when`(mockedRepository.findById(champion.id!!)).thenReturn(Optional.of(champion))
-
+        every { mockedRepository.findById(champion.id!!) } returns Optional.of(champion)
         val serviceResponse = service.getChampion(champion.id!!)
 
         with(serviceResponse) {
-            assertTrue(isPresent)
+            isPresent shouldBe true
             with(get()) {
-                assertEquals(1, id)
-                assertEquals(champion.name, name)
-                assertEquals(champion.shortDescription, shortDescription)
-                assertEquals(champion.role, role)
-                assertEquals(champion.difficulty, difficulty)
+                id shouldBe champion.id
+                champion.name shouldBe name
+                champion.shortDescription shouldBe shortDescription
+                champion.role shouldBe role
+                champion.difficulty shouldBe difficulty
             }
         }
     }
 
     @Test
     fun `deve retornar optional vazio quando campeao nao estiver cadastrado`() {
-        `when`(mockedRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty())
+        every { mockedRepository.findById(any()) } returns Optional.empty()
 
         val serviceResponse = service.getChampion(1)
 
-        assertTrue(serviceResponse.isEmpty)
+        serviceResponse.isEmpty shouldBe true
     }
 
     @Test
@@ -101,30 +92,18 @@ class ChampionServiceImplTests {
             role = "FIGHTER",
             difficulty = "HIGH"
         )
-        `when`(mockedRepository.findById(champion.id!!)).thenReturn(Optional.of(champion))
-        `when`(mockedRepository.existsByName(updateRequest.name!!)).thenReturn(false)
+        every { mockedRepository.findById(champion.id!!) } returns Optional.of(champion)
+        every { mockedRepository.existsByName(updateRequest.name!!) } returns false
 
         val serviceResponse = service.updateChampion(1, updateRequest)
 
-        assertTrue(serviceResponse.isPresent)
+        serviceResponse.isPresent shouldBe true
         with(serviceResponse.get()) {
-            assertEquals(champion.id, id)
-            assertEquals(
-                if (updateRequest.name.isNullOrBlank()) updateRequest.name else champion.name,
-                name
-            )
-            assertEquals(
-                if (updateRequest.shortDescription.isNullOrBlank()) updateRequest.shortDescription else champion.shortDescription,
-                shortDescription
-            )
-            assertEquals(
-                if (updateRequest.role.isNullOrBlank()) updateRequest.role else champion.role,
-                role
-            )
-            assertEquals(
-                if (updateRequest.difficulty.isNullOrBlank()) updateRequest.difficulty else champion.difficulty,
-                difficulty
-            )
+            champion.id shouldBe id
+            (if (updateRequest.name.isNullOrBlank()) updateRequest.name else champion.name) shouldBe name
+            (if (updateRequest.shortDescription.isNullOrBlank()) updateRequest.shortDescription else champion.shortDescription) shouldBe shortDescription
+            (if (updateRequest.role.isNullOrBlank()) updateRequest.role else champion.role) shouldBe role
+            (if (updateRequest.difficulty.isNullOrBlank()) updateRequest.difficulty else champion.difficulty) shouldBe difficulty
         }
     }
 
@@ -136,11 +115,11 @@ class ChampionServiceImplTests {
             role = "FIGHTER",
             difficulty = "HIGH"
         )
-        `when`(mockedRepository.findById(1)).thenReturn(Optional.empty())
+        every { mockedRepository.findById(any()) } returns Optional.empty()
 
         val serviceResponse = service.updateChampion(1, updateRequest)
 
-        assertTrue(serviceResponse.isEmpty)
+        serviceResponse.isEmpty shouldBe true
     }
 
     @Test
@@ -152,14 +131,14 @@ class ChampionServiceImplTests {
             difficulty = ChampionDifficulty.MODERATE
         ).apply { id = 1 }
         val updateRequest = ChampionRequest(name = "Riven")
-        `when`(mockedRepository.findById(1)).thenReturn(Optional.of(champion))
-        `when`(mockedRepository.existsByName(updateRequest.name!!)).thenReturn(true)
-        val exception = assertThrows<UniqueFieldAlreadyExistsException> {
+        every { mockedRepository.findById(1) } returns Optional.of(champion)
+        every { mockedRepository.existsByName(updateRequest.name!!) } returns true
+        val exception = shouldThrow<UniqueFieldAlreadyExistsException> {
             service.updateChampion(1, updateRequest)
         }
 
-        assertEquals("champion", exception.entity)
-        assertEquals("name", exception.field)
+        "champion" shouldBe exception.entity
+        "name" shouldBe exception.field
     }
 
     @Test
@@ -200,15 +179,18 @@ class ChampionServiceImplTests {
                 difficulty = ChampionDifficulty.HIGH
             )
         )
-        `when`(mockedRepository.findAll())
-            .thenReturn(champions)
+        every { mockedRepository.findAll() } returns champions
 
         val functionReturn = service.getAllChampions()
 
         val championsDetailsResponse = champions.map { ChampionResponse(it) }
-        MatcherAssert.assertThat(functionReturn, Matchers.containsInAnyOrder(*championsDetailsResponse.toTypedArray()))
+        functionReturn shouldContainExactlyInAnyOrder championsDetailsResponse
     }
 
     @Test
-    fun `deve deletar campeao`() = service.deleteChampion(1)
+    fun `deve deletar campeao`() {
+        val championId = 1L
+        every { mockedRepository.deleteById(championId) } returns Unit
+        service.deleteChampion(championId)
+    }
 }

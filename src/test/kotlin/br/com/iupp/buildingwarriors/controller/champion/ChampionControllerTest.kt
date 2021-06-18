@@ -6,22 +6,23 @@ import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.service.ChampionService
+import io.kotest.core.spec.style.AnnotationSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Test
-import org.mockito.Mockito
+import io.micronaut.http.HttpStatus.CREATED
+import io.micronaut.test.extensions.kotest.annotation.MicronautTest
+import io.mockk.every
+import io.mockk.mockk
 import java.util.*
 
 @MicronautTest
-class ChampionControllerTests {
+class ChampionControllerTest : AnnotationSpec() {
 
-    private val mockedService: ChampionService = Mockito.mock(ChampionService::class.java)
-    private val controller = ChampionController(service = mockedService)
+    private val mockedService = mockk<ChampionService>()
+
+    private val controller = ChampionController(mockedService)
 
     @Test
     fun `deve encontrar todos champions cadastrados`() {
@@ -67,14 +68,13 @@ class ChampionControllerTests {
                 difficulty = ChampionDifficulty.HIGH
             )
         )
-        Mockito.`when`(mockedService.getAllChampions())
-            .thenReturn(champions)
+        every { mockedService.getAllChampions() } returns champions
 
         val response = controller.getAllChampions()
 
         with(response) {
-            assertEquals(HttpStatus.OK.code, status.code)
-            assertThat(body(), containsInAnyOrder(*champions.toTypedArray()))
+            HttpStatus.OK.code shouldBe  status.code
+            body() shouldBe champions
         }
     }
 
@@ -91,34 +91,28 @@ class ChampionControllerTests {
         val createRequest: ChampionRequest = request.body.get()
         val championId = 1L
         request.body.get().apply {
-            Mockito.`when`(mockedService.saveChampion(this))
-                .thenReturn(
+            every { mockedService.saveChampion(this@apply) } returns
                     ChampionResponse(
-                            id = championId,
-                            name = name!!,
-                            shortDescription = shortDescription!!,
-                            role = ChampionRole.valueOf(role!!),
-                            difficulty = ChampionDifficulty.valueOf(difficulty!!)
+                        id = championId,
+                        name = name!!,
+                        shortDescription = shortDescription!!,
+                        role = ChampionRole.valueOf(role!!),
+                        difficulty = ChampionDifficulty.valueOf(difficulty!!)
                     )
-                )
         }
         val response = controller.createChampion(request, createRequest)
 
         with(response) {
-            assertEquals(io.micronaut.http.HttpStatus.CREATED.code, status.code)
+            CREATED.code shouldBe  status.code
             val body = body()
-            assertNotNull(body)
-            assertNotNull(body!!.id)
-            assertEquals(
-                "${request.path}/${body.id}",
-                header("location")
-            )
+            body!!.id shouldNotBe null
+            "${request.path}/${body.id}" shouldBe header("location")
             with(body()!!) {
-                assertEquals(championId, id)
-                assertEquals(createRequest.name, name)
-                assertEquals(createRequest.shortDescription, shortDescription)
-                assertEquals(createRequest.role!!.toUpperCase(), role.toString())
-                assertEquals(createRequest.difficulty!!.toUpperCase(), difficulty.toString())
+                championId shouldBe id
+                createRequest.name shouldBe name
+                createRequest.shortDescription shouldBe shortDescription
+                createRequest.role!!.toUpperCase() shouldBe role.toString()
+                createRequest.difficulty!!.toUpperCase() shouldBe difficulty.toString()
             }
         }
     }
@@ -132,33 +126,35 @@ class ChampionControllerTests {
             role = ChampionRole.MAGE,
             difficulty = ChampionDifficulty.MODERATE
         )
-        Mockito.`when`(mockedService.getChampion(championResponse.id!!))
-            .thenReturn(Optional.of(championResponse))
+        every {
+            mockedService.getChampion(championResponse.id!!)
+        } returns Optional.of(championResponse)
 
         val response = controller.getChampion(championResponse.id!!)
 
         with(response) {
-            assertEquals(HttpStatus.OK.code, status.code)
+            HttpStatus.OK.code shouldBe status.code
             val body = body()
-            assertNotNull(body)
-            assertEquals(championResponse, body)
+            body shouldNotBe null
+            championResponse shouldBe body
         }
     }
 
     @Test
     fun `deve retornar status 404 para id inexistente`() {
-        Mockito.`when`(mockedService.getChampion(2))
-            .thenReturn(Optional.empty())
+        every { mockedService.getChampion(2) } returns Optional.empty()
 
         val response = controller.getChampion(2)
-
-        assertEquals(HttpStatus.NOT_FOUND.code, response.status.code)
+        HttpStatus.NOT_FOUND.code shouldBe response.status.code
     }
+
 
     @Test
     fun `deve deletar champion existente`() {
-        val response = controller.deleteChampion(1L)
-        assertEquals(HttpStatus.NO_CONTENT.code, response.status.code)
+        val id = 1L
+        every { mockedService.deleteChampion(id) } returns Unit
+        val response = controller.deleteChampion(id)
+        HttpStatus.NO_CONTENT.code shouldBe response.status.code
     }
 
     @Test
@@ -176,9 +172,9 @@ class ChampionControllerTests {
             role = champion.role.toString(),
             difficulty = champion.difficulty.toString()
         )
-        Mockito.`when`(
+        every {
             mockedService.updateChampion(champion.id!!, updateRequest)
-        ).thenReturn(Optional.of(ChampionResponse(champion = champion)))
+        } returns Optional.of(ChampionResponse(champion = champion))
 
         val response = controller.updateChampion(
             httpRequest = HttpRequest.PUT("/api/v1/champions/${champion.id}", updateRequest),
@@ -187,9 +183,9 @@ class ChampionControllerTests {
         )
 
         with(response) {
-            assertEquals(HttpStatus.ACCEPTED.code, status.code)
-            assertNotNull(body())
-            assertEquals(ChampionResponse(champion), body())
+            HttpStatus.ACCEPTED.code shouldBe status.code
+            body() shouldNotBe null
+            ChampionResponse(champion) shouldBe body()
         }
     }
 
@@ -202,16 +198,16 @@ class ChampionControllerTests {
             difficulty = "HIGH"
         )
         val controller = ChampionController(mockedService)
-        Mockito.`when`(mockedService.updateChampion(2, updateRequest))
-            .thenReturn(Optional.empty())
+        every {
+            mockedService.updateChampion(2, updateRequest)} returns Optional.empty()
 
-        val response =
-            controller.updateChampion(
-                id = 2,
-                httpRequest = HttpRequest.PUT("/api/v1/champions/${2}", updateRequest),
-                championRequest = updateRequest
-            )
+            val response =
+                controller.updateChampion(
+                    id = 2,
+                    httpRequest = HttpRequest.PUT("/api/v1/champions/${2}", updateRequest),
+                    championRequest = updateRequest
+                )
 
-        assertEquals(HttpStatus.NOT_FOUND.code, response.status.code)
+            HttpStatus.NOT_FOUND.code shouldBe response.status.code
+        }
     }
-}
