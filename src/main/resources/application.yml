@@ -7,16 +7,16 @@ micronaut:
 api:
   path: /api/v1
 
-datasources:
+cassandra:
   default:
-    url: jdbc:h2:mem:${DB_NAME:lolDb}
-    driverClassName: org.h2.Driver
-    username: ${DB_USER:sa}
-    password: ${DB_PASSWORD:''}
-    dialect: H2
-jpa.default.properties.hibernate:
-  hbm2ddl.auto: update
-  show_sql: true
+    basic:
+      contact-points:
+        - "127.0.0.1:9042"
+      session-keyspace: loldb
+      load-balancing-policy:
+        local-datacenter: datacenter1
+
+
 endpoints:
   health:
     enabled: true

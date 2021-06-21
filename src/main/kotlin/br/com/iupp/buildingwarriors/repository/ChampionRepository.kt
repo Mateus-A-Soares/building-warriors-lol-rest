@@ -1,11 +1,13 @@
 package br.com.iupp.buildingwarriors.repository
 
 import br.com.iupp.buildingwarriors.model.Champion
-import io.micronaut.data.annotation.Repository
-import io.micronaut.data.repository.CrudRepository
+import java.util.*
 
-@Repository
-interface ChampionRepository : CrudRepository<Champion, Long> {
+interface ChampionRepository {
 
     fun existsByName(name: String) : Boolean
+    fun save(champion: Champion): Champion
+    fun findById(id: Long): Optional<Champion>
+    fun findAll(): List<Champion>
+    fun deleteById(id: Long)
 }

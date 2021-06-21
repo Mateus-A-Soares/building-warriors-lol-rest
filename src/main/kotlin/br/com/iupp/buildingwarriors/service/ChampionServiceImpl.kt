@@ -8,12 +8,10 @@ import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.repository.ChampionRepository
 import java.util.*
 import javax.inject.Singleton
-import javax.transaction.Transactional
 
 @Singleton
 open class ChampionServiceImpl(private val championRepository: ChampionRepository) : ChampionService {
 
-    @Transactional
     override fun saveChampion(championRequest: ChampionRequest): ChampionResponse {
         val champion = championRequest.toModel(championRepository)
         return ChampionResponse(championRepository.save(champion))
@@ -31,7 +29,6 @@ open class ChampionServiceImpl(private val championRepository: ChampionRepositor
         return championRepository.findAll().map { ChampionResponse(it) }
     }
 
-    @Transactional
     override fun updateChampion(
         id: Long,
         championRequest: ChampionRequest
@@ -53,6 +50,5 @@ open class ChampionServiceImpl(private val championRepository: ChampionRepositor
         }
     }
 
-    @Transactional
     override fun deleteChampion(id: Long) = championRepository.deleteById(id)
 }
