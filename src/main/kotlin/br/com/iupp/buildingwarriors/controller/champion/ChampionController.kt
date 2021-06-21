@@ -3,12 +3,13 @@ package br.com.iupp.buildingwarriors.controller.champion
 import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.service.ChampionService
+import br.com.iupp.buildingwarriors.util.validator.ValidUUID
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.*
 import io.micronaut.validation.Validated
 import javax.validation.Valid
-import javax.validation.constraints.Positive
+import javax.validation.constraints.NotBlank
 
 
 @Controller("\${api.path}/champions")
@@ -31,7 +32,7 @@ class ChampionController(
     fun getAllChampions(): HttpResponse<List<ChampionResponse>> = HttpResponse.ok(service.getAllChampions())
 
     @Get("/{id}")
-    fun getChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<ChampionResponse> =
+    fun getChampion(@PathVariable @NotBlank id: String): HttpResponse<ChampionResponse> =
         with(service.getChampion(id)) {
             if (isPresent) HttpResponse.ok(get())
             else HttpResponse.notFound()
@@ -42,7 +43,7 @@ class ChampionController(
     fun updateChampion(
         httpRequest: HttpRequest<ChampionRequest>,
         @Valid @Body championRequest: ChampionRequest,
-        @PathVariable @Positive(message = "Deve ser um numero positivo") id: Long
+        @PathVariable @NotBlank @ValidUUID id: String
     ): HttpResponse<ChampionResponse> = with(service.updateChampion(id, championRequest)) {
         if (isEmpty) HttpResponse.notFound()
         else {
@@ -52,7 +53,7 @@ class ChampionController(
     }
 
     @Delete("/{id}")
-    fun deleteChampion(@PathVariable @Positive(message = "Deve ser um numero positivo") id: Long): HttpResponse<Unit> {
+    fun deleteChampion(@PathVariable @NotBlank @ValidUUID id: String): HttpResponse<Unit> {
         service.deleteChampion(id)
         return HttpResponse.noContent()
     }

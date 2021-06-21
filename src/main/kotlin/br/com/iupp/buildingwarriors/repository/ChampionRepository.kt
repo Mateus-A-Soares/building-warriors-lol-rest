@@ -5,9 +5,9 @@ import java.util.*
 
 interface ChampionRepository {
 
-    fun existsByName(name: String) : Boolean
     fun save(champion: Champion): Champion
-    fun findById(id: Long): Optional<Champion>
+    fun findById(id: UUID): Optional<Champion>
     fun findAll(): List<Champion>
-    fun deleteById(id: Long)
+    fun deleteById(id: UUID)
+    fun update(champion: Champion): Champion
 }

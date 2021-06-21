@@ -37,10 +37,10 @@ data class ChampionRequest(
      */
     private fun validateFields(repository: ChampionRepository) {
         val fieldErrors: MutableList<Pair<String, String>> = mutableListOf()
-        name?.let {
-            if (repository.existsByName(name))
-                fieldErrors.add("name" to "já cadastrado")
-        }
+//        name?.let {
+//            if (repository.existsByName(name))
+//                fieldErrors.add("name" to "já cadastrado")
+//        }
         if (name.isNullOrBlank() || shortDescription.isNullOrBlank() || role.isNullOrBlank() || difficulty.isNullOrBlank()) {
             if (name.isNullOrBlank()) fieldErrors.add("name" to "Campo não pode estar vazio")
             if (shortDescription.isNullOrBlank()) fieldErrors.add("shortDescription" to "Campo não pode estar vazio")

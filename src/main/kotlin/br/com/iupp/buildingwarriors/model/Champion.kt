@@ -1,5 +1,6 @@
 package br.com.iupp.buildingwarriors.model
 
+import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
@@ -16,5 +17,5 @@ data class Champion(
     @field:NotBlank
     var difficulty: ChampionDifficulty,
 
-    var id : Long? = null
+    var id : UUID? = null
 )
