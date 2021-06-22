@@ -31,7 +31,7 @@ class ChampionServiceImplTest : AnnotationSpec() {
             difficulty = ChampionDifficulty.MODERATE
         )
         val request = mockk<ChampionRequest>()
-        every { request.toModel(mockedRepository) } returns champion.apply { id = championId }
+        every { request.toModel() } returns champion.apply { id = championId }
         every { mockedRepository.save(champion) } returns champion
 
         val serviceResponse = service.saveChampion(request)

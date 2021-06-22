@@ -4,7 +4,6 @@ import br.com.iupp.buildingwarriors.exception.FieldConstraintException
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
-import br.com.iupp.buildingwarriors.repository.ChampionRepository
 import br.com.iupp.buildingwarriors.util.validator.ValidChampionDifficulty
 import br.com.iupp.buildingwarriors.util.validator.ValidChampionRole
 import io.micronaut.core.annotation.Introspected
@@ -22,8 +21,8 @@ data class ChampionRequest(
     val difficulty: String? = null
 ) {
 
-    fun toModel(repository: ChampionRepository): Champion {
-        validateFields(repository)
+    fun toModel(): Champion {
+        validateFields()
         return Champion(
             name = name!!,
             shortDescription = shortDescription!!,
@@ -35,12 +34,8 @@ data class ChampionRequest(
     /**
      * @throws FieldConstraintException
      */
-    private fun validateFields(repository: ChampionRepository) {
+    private fun validateFields() {
         val fieldErrors: MutableList<Pair<String, String>> = mutableListOf()
-//        name?.let {
-//            if (repository.existsByName(name))
-//                fieldErrors.add("name" to "já cadastrado")
-//        }
         if (name.isNullOrBlank() || shortDescription.isNullOrBlank() || role.isNullOrBlank() || difficulty.isNullOrBlank()) {
             if (name.isNullOrBlank()) fieldErrors.add("name" to "Campo não pode estar vazio")
             if (shortDescription.isNullOrBlank()) fieldErrors.add("shortDescription" to "Campo não pode estar vazio")

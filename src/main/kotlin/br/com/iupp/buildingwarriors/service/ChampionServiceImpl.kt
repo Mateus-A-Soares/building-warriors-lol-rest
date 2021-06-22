@@ -12,7 +12,7 @@ import javax.inject.Singleton
 open class ChampionServiceImpl(private val championRepository: ChampionRepository) : ChampionService {
 
     override fun saveChampion(championRequest: ChampionRequest): ChampionResponse {
-        val champion = championRequest.toModel(championRepository)
+        val champion = championRequest.toModel()
         return ChampionResponse(championRepository.save(champion))
     }
 
@@ -36,10 +36,6 @@ open class ChampionServiceImpl(private val championRepository: ChampionRepositor
         return if (optionalChampion.isEmpty) Optional.empty()
         else {
             with(optionalChampion.get()) {
-//                if (!championRequest.name.isNullOrBlank()
-//                    && championRequest.name != name
-//                    && championDao.existsByName(championRequest.name)
-//                ) throw UniqueFieldAlreadyExistsException(entity = "champion", field = "name")
                 if (!championRequest.name.isNullOrBlank()) name = championRequest.name
                 if (!championRequest.shortDescription.isNullOrBlank()) shortDescription = championRequest.shortDescription
                 if (!championRequest.role.isNullOrBlank()) role = ChampionRole.valueOf(championRequest.role.toUpperCase())
