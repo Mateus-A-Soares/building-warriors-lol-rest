@@ -28,40 +28,40 @@ class ChampionControllerTest : AnnotationSpec() {
     fun `deve encontrar todos champions cadastrados`() {
         val champions: List<ChampionResponse> = listOf(
             ChampionResponse(
-                id = 1,
+                id = UUID.randomUUID().toString(),
                 name = "Rammus",
                 shortDescription = "Idolatrado por muitos, dispensado por alguns e misterioso para todos, Rammus é um ser curioso e enigmático.",
                 role = ChampionRole.TANK,
                 difficulty = ChampionDifficulty.MODERATE
             ),
             ChampionResponse(
-                id = 2,
+                id = UUID.randomUUID().toString(),
                 name = "Morgana",
                 shortDescription = "Dividida entre sua natureza mortal e celestial, Morgana prendeu suas asas para preservar sua humanidade e inflige sua dor e amargura nos desonestos e corruptos.",
                 role = ChampionRole.SUPPORT,
                 difficulty = ChampionDifficulty.LOW
             ),
             ChampionResponse(
-                id = 3,
+                id = UUID.randomUUID().toString(),
                 name = "Ashe",
                 shortDescription = "A mãe de guerra Glacinata da tribo de Avarosa, Ashe comanda a horda mais populosa do norte.",
                 role = ChampionRole.MARKSMAN,
                 difficulty = ChampionDifficulty.MODERATE
             ),
             ChampionResponse(
-                id = 5,
+                id = UUID.randomUUID().toString(),
                 name = "Ahri",
                 shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
                 role = ChampionRole.MAGE,
                 difficulty = ChampionDifficulty.MODERATE
             ), ChampionResponse(
-                id = 6,
+                id = UUID.randomUUID().toString(),
                 name = "Master Yi",
                 shortDescription = "Master Yi treinou seu corpo e afiou sua mente para que pensamento e ação se tornassem quase um só.",
                 role = ChampionRole.ASSASSIN,
                 difficulty = ChampionDifficulty.MODERATE
             ), ChampionResponse(
-                id = 7,
+                id = UUID.randomUUID().toString(),
                 name = "Riven",
                 shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
                 role = ChampionRole.FIGHTER,
@@ -73,7 +73,7 @@ class ChampionControllerTest : AnnotationSpec() {
         val response = controller.getAllChampions()
 
         with(response) {
-            HttpStatus.OK.code shouldBe  status.code
+            status.code shouldBe HttpStatus.OK.code
             body() shouldBe champions
         }
     }
@@ -89,11 +89,11 @@ class ChampionControllerTest : AnnotationSpec() {
             )
         )
         val createRequest: ChampionRequest = request.body.get()
-        val championId = 1L
+        val championId = UUID.randomUUID()
         request.body.get().apply {
             every { mockedService.saveChampion(this@apply) } returns
                     ChampionResponse(
-                        id = championId,
+                        id = championId.toString(),
                         name = name!!,
                         shortDescription = shortDescription!!,
                         role = ChampionRole.valueOf(role!!),
@@ -103,111 +103,117 @@ class ChampionControllerTest : AnnotationSpec() {
         val response = controller.createChampion(request, createRequest)
 
         with(response) {
-            CREATED.code shouldBe  status.code
-            val body = body()
-            body!!.id shouldNotBe null
-            "${request.path}/${body.id}" shouldBe header("location")
+            status.code shouldBe CREATED.code
+            val body = body()!!
+            body.id shouldNotBe null
+            header("location") shouldBe "${request.path}/${body.id}"
             with(body()!!) {
-                championId shouldBe id
-                createRequest.name shouldBe name
-                createRequest.shortDescription shouldBe shortDescription
-                createRequest.role!!.toUpperCase() shouldBe role.toString()
-                createRequest.difficulty!!.toUpperCase() shouldBe difficulty.toString()
+                id shouldBe championId.toString()
+                name shouldBe createRequest.name
+                shortDescription shouldBe createRequest.shortDescription
+                role.toString() shouldBe createRequest.role!!.toUpperCase()
+                difficulty.toString() shouldBe createRequest.difficulty!!.toUpperCase()
             }
         }
     }
 
     @Test
     fun `deve encontrar champion existente`() {
+        val championId = UUID.randomUUID()
         val championResponse = ChampionResponse(
-            id = 1,
+            id = championId.toString(),
             name = "Ahri",
             shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
             role = ChampionRole.MAGE,
             difficulty = ChampionDifficulty.MODERATE
         )
         every {
-            mockedService.getChampion(championResponse.id!!)
+            mockedService.getChampion(championId.toString())
         } returns Optional.of(championResponse)
 
-        val response = controller.getChampion(championResponse.id!!)
+        val response = controller.getChampion(championId.toString())
 
         with(response) {
-            HttpStatus.OK.code shouldBe status.code
+            status.code shouldBe HttpStatus.OK.code
             val body = body()
             body shouldNotBe null
-            championResponse shouldBe body
+            body shouldBe championResponse
         }
     }
 
     @Test
     fun `deve retornar status 404 para id inexistente`() {
-        every { mockedService.getChampion(2) } returns Optional.empty()
+        val randomUUID = UUID.randomUUID()
+        every { mockedService.getChampion(randomUUID.toString()) } returns Optional.empty()
 
-        val response = controller.getChampion(2)
-        HttpStatus.NOT_FOUND.code shouldBe response.status.code
+        val response = controller.getChampion(randomUUID.toString())
+        response.status.code shouldBe HttpStatus.NOT_FOUND.code
     }
 
 
     @Test
     fun `deve deletar champion existente`() {
-        val id = 1L
-        every { mockedService.deleteChampion(id) } returns Unit
-        val response = controller.deleteChampion(id)
-        HttpStatus.NO_CONTENT.code shouldBe response.status.code
+        val championId = UUID.randomUUID()
+        every { mockedService.deleteChampion(championId.toString()) } returns Unit
+        val response = controller.deleteChampion(championId.toString())
+        response.status.code shouldBe HttpStatus.NO_CONTENT.code
     }
 
     @Test
     fun `deve atualizar champion cadastrado`() {
-        var champion = Champion(
-            id = 1L,
+        val champion = Champion(
+            id = UUID.randomUUID(),
             name = "Riven",
             shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
             role = ChampionRole.FIGHTER,
             difficulty = ChampionDifficulty.HIGH
         )
-        val updateRequest = ChampionRequest(
-            name = champion.name,
-            shortDescription = champion.shortDescription,
-            role = champion.role.toString(),
-            difficulty = champion.difficulty.toString()
-        )
+        val updateRequest = champion.run {
+            ChampionRequest(
+                name = name,
+                shortDescription = shortDescription,
+                role = role.toString(),
+                difficulty = difficulty.toString()
+            )
+        }
         every {
-            mockedService.updateChampion(champion.id!!, updateRequest)
+            mockedService.updateChampion(champion.id.toString(), updateRequest)
         } returns Optional.of(ChampionResponse(champion = champion))
 
         val response = controller.updateChampion(
-            httpRequest = HttpRequest.PUT("/api/v1/champions/${champion.id}", updateRequest),
+            httpRequest = HttpRequest.PUT("/api/v1/champions/${champion.id.toString()}", updateRequest),
             championRequest = updateRequest,
-            id = champion.id!!
+            id = champion.id.toString()
         )
 
         with(response) {
-            HttpStatus.ACCEPTED.code shouldBe status.code
+            status.code shouldBe HttpStatus.ACCEPTED.code
             body() shouldNotBe null
-            ChampionResponse(champion) shouldBe body()
+            body() shouldBe ChampionResponse(champion)
         }
     }
 
     @Test
     fun `deve retornar status 404 para update de id inexistente`() {
-        var updateRequest = ChampionRequest(
+        val updateRequest = ChampionRequest(
             name = "Riven",
             shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
             role = "FIGHTER",
             difficulty = "HIGH"
         )
         val controller = ChampionController(mockedService)
+        val randomUUID = UUID.randomUUID()
         every {
-            mockedService.updateChampion(2, updateRequest)} returns Optional.empty()
+            mockedService.updateChampion(randomUUID.toString(), updateRequest)
+        } returns Optional.empty()
 
-            val response =
-                controller.updateChampion(
-                    id = 2,
-                    httpRequest = HttpRequest.PUT("/api/v1/champions/${2}", updateRequest),
-                    championRequest = updateRequest
-                )
+        val response =
+            controller.updateChampion(
+                id = randomUUID.toString(),
+                httpRequest = HttpRequest.PUT("/api/v1/champions/$randomUUID", updateRequest),
+                championRequest = updateRequest
+            )
 
-            HttpStatus.NOT_FOUND.code shouldBe response.status.code
-        }
+        response.status.code shouldBe HttpStatus.NOT_FOUND.code
     }
+}
