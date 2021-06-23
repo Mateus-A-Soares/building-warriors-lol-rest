@@ -11,11 +11,10 @@ cassandra:
   default:
     basic:
       contact-points:
-        - "127.0.0.1:9042"
-      session-keyspace: loldb
+        - ${API_DB_HOST:localhost}:${API_DB_PORT:9042}
+      session-keyspace: ${API_DB_KEYSPACE}
       load-balancing-policy:
         local-datacenter: datacenter1
-
 
 endpoints:
   health:
