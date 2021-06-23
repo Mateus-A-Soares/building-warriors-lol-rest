@@ -6,19 +6,17 @@ import br.com.iupp.buildingwarriors.service.ChampionService
 import br.com.iupp.buildingwarriors.util.validator.ValidUUID
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
-import io.micronaut.http.annotation.*
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.PathVariable
 import io.micronaut.validation.Validated
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 
-
-@Controller("\${api.path}/champions")
 @Validated
 class ChampionController(
     private val service: ChampionService
 ) {
 
-    @Post
     fun createChampion(
         httpRequest: HttpRequest<ChampionRequest>,
         @Body @Valid championRequest: ChampionRequest
@@ -28,18 +26,14 @@ class ChampionController(
         return HttpResponse.created(body, HttpResponse.uri(location))
     }
 
-    @Get
     fun getAllChampions(): HttpResponse<List<ChampionResponse>> = HttpResponse.ok(service.getAllChampions())
 
-    @Get("/{id}")
     fun getChampion(@PathVariable @NotBlank id: String): HttpResponse<ChampionResponse> =
         with(service.getChampion(id)) {
             if (isPresent) HttpResponse.ok(get())
             else HttpResponse.notFound()
         }
 
-
-    @Put("/{id}")
     fun updateChampion(
         httpRequest: HttpRequest<ChampionRequest>,
         @Valid @Body championRequest: ChampionRequest,
@@ -52,7 +46,6 @@ class ChampionController(
         }
     }
 
-    @Delete("/{id}")
     fun deleteChampion(@PathVariable @NotBlank @ValidUUID id: String): HttpResponse<Unit> {
         service.deleteChampion(id)
         return HttpResponse.noContent()

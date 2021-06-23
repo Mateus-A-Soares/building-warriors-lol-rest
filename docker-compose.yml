@@ -20,6 +20,14 @@ services:
 #      - scylla-node1
 #      - scylla-node2
 #      - scylla-node3
+  
+  nats:
+    container_name: nats
+    image: 'nats:latest'
+    expose:
+      - "4222"
+    networks:
+      web:
       
   database:
     container_name: lol-scylla-db

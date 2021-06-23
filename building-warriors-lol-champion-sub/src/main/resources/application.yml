@@ -4,8 +4,11 @@ micronaut:
   server:
     port: ${API_SERVER_PORT:8080}
 
-api:
-  path: /api/v1
+nats:
+  addresses:
+    - nats://${API_NATS_HOST:localhost}:${PORT:4222}"
+  username: ${API_NATS_USERNAME}
+  password: ${API_NATS_PASSWORD}
 
 cassandra:
   default:
@@ -15,6 +18,9 @@ cassandra:
       session-keyspace: ${API_DB_KEYSPACE}
       load-balancing-policy:
         local-datacenter: datacenter1
+
+api:
+  path: /api/v1
 
 endpoints:
   health:
