@@ -5,6 +5,7 @@ import br.com.iupp.buildingwarriors.core.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.core.model.ChampionRole
 import br.com.iupp.buildingwarriors.entrypoint.controller.request.ChampionRequest
 import br.com.iupp.buildingwarriors.entrypoint.controller.response.ChampionResponse
+import br.com.iupp.buildingwarriors.infrastructure.model.ChampionEvent
 
 object ChampionMapper {
     fun championRequestToChampion(championRequest: ChampionRequest): Champion =
@@ -38,5 +39,15 @@ object ChampionMapper {
         ChampionDifficulty.valueOf(value.toUpperCase())
     } catch (e: IllegalArgumentException) {
         null
+    }
+
+    fun championToChampionEvent(champion: Champion): ChampionEvent = with(champion){
+        ChampionEvent(
+            id = id,
+            name = name,
+            shortDescription = shortDescription,
+            role = role?.toString(),
+            difficulty = difficulty?.toString()
+        )
     }
 }

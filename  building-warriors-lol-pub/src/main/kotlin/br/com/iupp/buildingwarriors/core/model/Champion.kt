@@ -1,6 +1,5 @@
 package br.com.iupp.buildingwarriors.core.model
 
-import java.util.*
 import javax.validation.constraints.Size
 
 data class Champion(
