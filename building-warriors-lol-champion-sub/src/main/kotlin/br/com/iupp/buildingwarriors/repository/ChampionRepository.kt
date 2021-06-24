@@ -10,4 +10,5 @@ interface ChampionRepository {
     fun findAll(): List<Champion>
     fun deleteById(id: UUID)
     fun update(champion: Champion): Champion
+    fun delete(toModel: Champion)
 }

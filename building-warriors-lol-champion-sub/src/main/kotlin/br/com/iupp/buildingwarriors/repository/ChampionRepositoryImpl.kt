@@ -34,6 +34,10 @@ class ChampionRepositoryImpl(private val cqlSession: CqlSession) : ChampionRepos
         return champion
     }
 
+    override fun delete(champion: Champion) {
+        cqlSession.execute(SimpleStatement.newInstance("DELETE from champion where id = ?", champion.id))
+    }
+
     override fun deleteById(id: UUID) {
         cqlSession.execute(SimpleStatement.newInstance("DELETE from champion where id = ?", id))
     }

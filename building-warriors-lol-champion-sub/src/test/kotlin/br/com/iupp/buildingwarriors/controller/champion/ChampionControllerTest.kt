@@ -7,11 +7,8 @@ import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.service.ChampionService
 import io.kotest.core.spec.style.AnnotationSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.HttpStatus.CREATED
 import io.micronaut.test.extensions.kotest.annotation.MicronautTest
 import io.mockk.every
 import io.mockk.mockk
@@ -22,7 +19,7 @@ class ChampionControllerTest : AnnotationSpec() {
 
     private val mockedService = mockk<ChampionService>()
 
-    private val controller = ChampionController(mockedService)
+    private val controller = ChampionListener(mockedService)
 
     @Test
     fun `deve encontrar todos champions cadastrados`() {
@@ -201,7 +198,7 @@ class ChampionControllerTest : AnnotationSpec() {
             role = "FIGHTER",
             difficulty = "HIGH"
         )
-        val controller = ChampionController(mockedService)
+        val controller = ChampionListener(mockedService)
         val randomUUID = UUID.randomUUID()
         every {
             mockedService.updateChampion(randomUUID.toString(), updateRequest)

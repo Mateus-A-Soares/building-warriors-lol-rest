@@ -6,11 +6,15 @@ import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.util.validator.ValidChampionDifficulty
 import br.com.iupp.buildingwarriors.util.validator.ValidChampionRole
+import br.com.iupp.buildingwarriors.util.validator.ValidUUID
 import io.micronaut.core.annotation.Introspected
+import java.util.*
 import javax.validation.constraints.Size
 
 @Introspected
 data class ChampionRequest(
+    @field:ValidUUID
+    val id: String? = null,
     @field:Size(max = 50)
     val name: String? = null,
     @field:Size(max = 255)
@@ -24,6 +28,7 @@ data class ChampionRequest(
     fun toModel(): Champion {
         validateFields()
         return Champion(
+            id = id?.let(UUID::fromString),
             name = name!!,
             shortDescription = shortDescription!!,
             role = ChampionRole.valueOf(role!!.toUpperCase()),

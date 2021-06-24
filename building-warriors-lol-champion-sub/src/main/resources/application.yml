@@ -6,7 +6,7 @@ micronaut:
 
 nats:
   addresses:
-    - nats://${API_NATS_HOST:localhost}:${PORT:4222}"
+    - nats://${API_NATS_HOST:localhost}:${PORT:4222}
   username: ${API_NATS_USERNAME}
   password: ${API_NATS_PASSWORD}
 
