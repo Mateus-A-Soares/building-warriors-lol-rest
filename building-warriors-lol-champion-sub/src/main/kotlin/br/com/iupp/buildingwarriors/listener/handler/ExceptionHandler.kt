@@ -1,4 +1,4 @@
-package br.com.iupp.buildingwarriors.controller.handler
+package br.com.iupp.buildingwarriors.listener.handler
 
 import br.com.iupp.buildingwarriors.exception.FieldConstraintException
 import br.com.iupp.buildingwarriors.exception.UniqueFieldAlreadyExistsException

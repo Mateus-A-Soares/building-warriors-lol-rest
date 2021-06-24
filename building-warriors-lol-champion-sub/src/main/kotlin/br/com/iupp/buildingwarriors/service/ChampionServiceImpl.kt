@@ -1,6 +1,6 @@
 package br.com.iupp.buildingwarriors.service
 
-import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
+import br.com.iupp.buildingwarriors.listener.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.exception.EntityNotFound
 import br.com.iupp.buildingwarriors.exception.FieldConstraintException
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty

@@ -1,6 +1,6 @@
 package br.com.iupp.buildingwarriors.model
 
-import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
+import br.com.iupp.buildingwarriors.listener.champion.request.ChampionRequest
 
 data class ChampionEvent(
     val operation: Operation,

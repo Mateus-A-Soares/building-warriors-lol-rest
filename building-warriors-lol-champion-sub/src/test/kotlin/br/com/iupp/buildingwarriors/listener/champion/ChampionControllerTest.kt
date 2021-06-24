@@ -1,6 +1,6 @@
-package br.com.iupp.buildingwarriors.controller.champion
+package br.com.iupp.buildingwarriors.listener.champion
 
-import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
+import br.com.iupp.buildingwarriors.listener.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty

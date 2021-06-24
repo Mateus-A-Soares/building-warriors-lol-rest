@@ -1,14 +1,12 @@
 package br.com.iupp.buildingwarriors.service
 
-import br.com.iupp.buildingwarriors.controller.champion.request.ChampionRequest
+import br.com.iupp.buildingwarriors.listener.champion.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
 import br.com.iupp.buildingwarriors.model.Champion
 import br.com.iupp.buildingwarriors.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.model.ChampionRole
 import br.com.iupp.buildingwarriors.repository.ChampionRepository
 import io.kotest.core.spec.style.AnnotationSpec
-import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.shouldBe
 import io.micronaut.test.extensions.kotest.annotation.MicronautTest
 import io.mockk.every
 import io.mockk.mockk

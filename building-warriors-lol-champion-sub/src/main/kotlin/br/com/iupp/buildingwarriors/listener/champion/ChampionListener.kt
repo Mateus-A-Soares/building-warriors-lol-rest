@@ -1,4 +1,4 @@
-package br.com.iupp.buildingwarriors.controller.champion
+package br.com.iupp.buildingwarriors.listener.champion
 
 import br.com.iupp.buildingwarriors.model.ChampionEvent
 import br.com.iupp.buildingwarriors.model.Operation

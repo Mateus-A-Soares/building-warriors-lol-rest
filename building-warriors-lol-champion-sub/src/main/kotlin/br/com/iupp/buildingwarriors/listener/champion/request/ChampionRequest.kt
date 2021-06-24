@@ -1,4 +1,4 @@
-package br.com.iupp.buildingwarriors.controller.champion.request
+package br.com.iupp.buildingwarriors.listener.champion.request
 
 import br.com.iupp.buildingwarriors.exception.FieldConstraintException
 import br.com.iupp.buildingwarriors.model.Champion

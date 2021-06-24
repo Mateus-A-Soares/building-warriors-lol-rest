@@ -1,4 +1,4 @@
-package br.com.iupp.buildingwarriors.controller.handler
+package br.com.iupp.buildingwarriors.listener.handler
 
 import io.micronaut.context.annotation.Replaces
 import io.micronaut.context.annotation.Requires
