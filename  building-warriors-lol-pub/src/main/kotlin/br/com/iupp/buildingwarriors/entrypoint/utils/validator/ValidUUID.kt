@@ -1,9 +1,10 @@
 package br.com.iupp.buildingwarriors.entrypoint.utils.validator
 
+import io.micronaut.core.annotation.AnnotationValue
+import io.micronaut.validation.validator.constraints.ConstraintValidator
+import io.micronaut.validation.validator.constraints.ConstraintValidatorContext
 import javax.inject.Singleton
 import javax.validation.Constraint
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 import javax.validation.Payload
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.*
@@ -21,7 +22,11 @@ annotation class ValidUUID(
 @Singleton
 class ValidUUIDValidator : ConstraintValidator<ValidUUID, String?> {
 
-    override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {
+    override fun isValid(
+        value: String?,
+        annotationMetadata: AnnotationValue<ValidUUID>,
+        context: ConstraintValidatorContext
+    ): Boolean {
         return value?.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}".toRegex())?: true
     }
 }

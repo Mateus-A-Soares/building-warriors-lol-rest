@@ -11,7 +11,6 @@ object ChampionMapper {
     fun championRequestToChampion(championRequest: ChampionRequest): Champion =
         with(championRequest) {
             Champion(
-                id = id,
                 name = name,
                 shortDescription = shortDescription,
                 role = role?.let(::stringToChampionRole),
@@ -19,13 +18,12 @@ object ChampionMapper {
             )
         }
 
-    fun championToChampionResponse(champion: Champion): ChampionResponse =with(champion){
+    fun championToChampionResponse(champion: Champion): ChampionResponse = with(champion) {
         ChampionResponse(
-            id = id,
             name = name,
             shortDescription = shortDescription,
-            role = role.toString(),
-            difficulty = difficulty.toString()
+            role = role?.toString(),
+            difficulty = difficulty?.toString()
         )
     }
 
@@ -41,7 +39,7 @@ object ChampionMapper {
         null
     }
 
-    fun championToChampionEvent(champion: Champion): ChampionEvent = with(champion){
+    fun championToChampionEvent(champion: Champion, id: String? = null): ChampionEvent = with(champion) {
         ChampionEvent(
             id = id,
             name = name,

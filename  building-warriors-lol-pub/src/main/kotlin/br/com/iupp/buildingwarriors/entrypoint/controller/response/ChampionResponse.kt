@@ -3,7 +3,6 @@ package br.com.iupp.buildingwarriors.entrypoint.controller.response
 import javax.validation.constraints.Size
 
 data class ChampionResponse (
-    val id: String? = null,
     @field:Size(max = 50)
     val name: String? = null,
     @field:Size(max = 255)

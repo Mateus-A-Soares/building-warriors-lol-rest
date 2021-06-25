@@ -16,8 +16,8 @@ class ChampionService(private val service: NatsServicePort): ChampionServicePort
         championToChampionResponse(this)
     }
 
-    override fun updateRequest(champion: Champion): ChampionResponse = with(champion){
-        service.updateChampionEvent(ChampionMapper.championToChampionEvent(this))
+    override fun updateRequest(id: String, champion: Champion): ChampionResponse = with(champion){
+        service.updateChampionEvent(ChampionMapper.championToChampionEvent(id = id, champion = this))
         championToChampionResponse(this)
     }
 

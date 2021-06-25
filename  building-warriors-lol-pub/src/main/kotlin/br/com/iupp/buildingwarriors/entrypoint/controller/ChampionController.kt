@@ -2,9 +2,9 @@ package br.com.iupp.buildingwarriors.entrypoint.controller
 
 import br.com.iupp.buildingwarriors.core.mapper.ChampionMapper.championRequestToChampion
 import br.com.iupp.buildingwarriors.core.ports.ChampionServicePort
-import br.com.iupp.buildingwarriors.entrypoint.controller.handler.exception.FieldConstraintException
 import br.com.iupp.buildingwarriors.entrypoint.controller.request.ChampionRequest
 import br.com.iupp.buildingwarriors.entrypoint.controller.response.ChampionResponse
+import br.com.iupp.buildingwarriors.entrypoint.utils.validator.ValidUUID
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.*
 import io.micronaut.validation.Validated
@@ -20,20 +20,19 @@ class ChampionController(
     @Post
     fun createChampion(
         @Body @Valid championRequest: ChampionRequest
-    ): HttpResponse<ChampionResponse> = HttpResponse.ok(service.createRequest(championRequestToChampion(championRequest)))
+    ): HttpResponse<ChampionResponse> =
+        HttpResponse.ok(service.createRequest(championRequestToChampion(championRequest)))
 
     @Put("/{id}")
     fun updateChampion(
-        @Valid @Body championRequest: ChampionRequest
-    ): HttpResponse<ChampionResponse> = with(championRequest) {
-        if(id.isNullOrBlank())
-            throw FieldConstraintException("champion", listOf("id" to "id não pode estar vazio"))
-        HttpResponse.ok(service.updateRequest(championRequestToChampion(this)))
-    }
+        @Valid @Body championRequest: ChampionRequest,
+        @PathVariable @NotBlank @ValidUUID id: String
+    ): HttpResponse<ChampionResponse> =
+        HttpResponse.ok(service.updateRequest(id = id, championRequestToChampion(championRequest)))
 
 
     @Delete("/{id}")
-    fun deleteChampion(@PathVariable @NotBlank id: String): HttpResponse<Unit> {
+    fun deleteChampion(@PathVariable @NotBlank @ValidUUID id: String): HttpResponse<Unit> {
         service.deleteRequest(id)
         return HttpResponse.noContent()
     }

@@ -5,6 +5,6 @@ import br.com.iupp.buildingwarriors.entrypoint.controller.response.ChampionRespo
 
 interface ChampionServicePort {
     fun createRequest(champion: Champion): ChampionResponse
-    fun updateRequest(champion: Champion): ChampionResponse
+    fun updateRequest(id: String, champion: Champion): ChampionResponse
     fun deleteRequest(id: String)
 }

@@ -3,7 +3,6 @@ package br.com.iupp.buildingwarriors.core.model
 import javax.validation.constraints.Size
 
 data class Champion(
-    val id: String? = null,
     @field:Size(max = 50)
     val name: String? = null,
     @field:Size(max = 255)
