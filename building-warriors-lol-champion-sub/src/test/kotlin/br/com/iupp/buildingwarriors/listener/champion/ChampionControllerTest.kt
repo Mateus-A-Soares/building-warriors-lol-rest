@@ -1,11 +1,12 @@
 package br.com.iupp.buildingwarriors.listener.champion
 
-import br.com.iupp.buildingwarriors.listener.champion.request.ChampionRequest
+import br.com.iupp.buildingwarriors.entrypoint.listener.request.ChampionRequest
 import br.com.iupp.buildingwarriors.controller.champion.response.ChampionResponse
-import br.com.iupp.buildingwarriors.model.Champion
-import br.com.iupp.buildingwarriors.model.ChampionDifficulty
-import br.com.iupp.buildingwarriors.model.ChampionRole
-import br.com.iupp.buildingwarriors.service.ChampionService
+import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionEntity
+import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionDifficulty
+import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionRole
+import br.com.iupp.buildingwarriors.entrypoint.listener.ChampionListener
+import br.com.iupp.buildingwarriors.core.ports.ChampionServicePort
 import io.kotest.core.spec.style.AnnotationSpec
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
@@ -17,7 +18,7 @@ import java.util.*
 @MicronautTest
 class ChampionControllerTest : AnnotationSpec() {
 
-    private val mockedService = mockk<ChampionService>()
+    private val mockedService = mockk<ChampionServicePort>()
 
     private val controller = ChampionListener(mockedService)
 
@@ -158,7 +159,7 @@ class ChampionControllerTest : AnnotationSpec() {
 
     @Test
     fun `deve atualizar champion cadastrado`() {
-        val champion = Champion(
+        val champion = ChampionEntity(
             id = UUID.randomUUID(),
             name = "Riven",
             shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
