@@ -1,0 +1,21 @@
+micronaut:
+  application:
+    name: buildingWarriorsLolEngine
+  server:
+    port: ${API_PORT:8081}
+
+api:
+  path: /api/v1
+
+endpoints:
+  health:
+    enabled: true
+
+cassandra:
+  default:
+    basic:
+      contact-points:
+        - ${API_DB_HOST:localhost}:${API_DB_PORT:9042}
+      session-keyspace: ${API_DB_KEYSPACE}
+      load-balancing-policy:
+        local-datacenter: datacenter1
