@@ -6,11 +6,8 @@ import java.util.*
 
 interface ChampionRepositoryPort {
 
-    fun save(champion: ChampionEntity): Champion
     fun findById(id: UUID): Optional<Champion>
-    fun findAll(): List<Champion>
-    fun deleteById(id: UUID)
+    fun save(champion: ChampionEntity): Champion
     fun update(champion: ChampionEntity): Champion
-    fun delete(champion: ChampionEntity)
-    fun delete(id: UUID)
+    fun deleteById(id: UUID)
 }

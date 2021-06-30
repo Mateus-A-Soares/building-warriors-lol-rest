@@ -8,7 +8,6 @@ import com.datastax.oss.driver.api.core.CqlSession
 import com.datastax.oss.driver.api.core.cql.Row
 import com.datastax.oss.driver.api.core.cql.SimpleStatement
 import java.util.*
-import java.util.stream.Collectors
 import javax.inject.Singleton
 
 @Singleton
@@ -35,23 +34,6 @@ class ChampionRepositoryImpl(private val cqlSession: CqlSession) : ChampionRepos
         return ChampionMapper.championEntityToModel(champion)
     }
 
-    override fun delete(id: UUID) {
-        cqlSession.execute(SimpleStatement.newInstance("DELETE from champion where id = ?", id))
-    }
-
-    override fun delete(champion: ChampionEntity) {
-        cqlSession.execute(SimpleStatement.newInstance("DELETE from champion where id = ?", champion.id))
-    }
-
-    override fun deleteById(id: UUID) {
-        cqlSession.execute(SimpleStatement.newInstance("DELETE from champion where id = ?", id))
-    }
-
-    override fun findAll(): List<Champion> {
-        val result = cqlSession.execute(SimpleStatement.newInstance("SELECT * FROM champion"))
-        return result.all().stream().map(this::mapToChampion).collect(Collectors.toList())
-    }
-
     override fun update(champion: ChampionEntity): Champion {
         cqlSession.execute(
             SimpleStatement.newInstance(
@@ -66,6 +48,9 @@ class ChampionRepositoryImpl(private val cqlSession: CqlSession) : ChampionRepos
         return findById(champion.id!!).orElseThrow { RuntimeException() }
     }
 
+    override fun deleteById(id: UUID) {
+        cqlSession.execute(SimpleStatement.newInstance("DELETE from champion where id = ?", id))
+    }
 
     private fun mapToChampion(row: Row): Champion {
         return Champion(

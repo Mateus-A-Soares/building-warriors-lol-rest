@@ -164,10 +164,10 @@ class ChampionServiceImplTest : AnnotationSpec() {
     @Test
     fun `deve deletar campeao`() {
         val champion = Champion(id = UUID.randomUUID())
-        every { mockedRepository.delete(champion.id!!) } returns Unit
+        every { mockedRepository.deleteById(champion.id!!) } returns Unit
 
         service.deleteChampion(champion)
 
-        verify { mockedRepository.delete(champion.id!!) }
+        verify { mockedRepository.deleteById(champion.id!!) }
     }
 }

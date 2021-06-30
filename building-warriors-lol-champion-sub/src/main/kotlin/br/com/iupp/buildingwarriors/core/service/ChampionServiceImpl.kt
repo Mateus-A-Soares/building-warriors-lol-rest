@@ -31,5 +31,5 @@ open class ChampionServiceImpl(private val championRepository: ChampionRepositor
     }
 
     override fun deleteChampion(champion: Champion) =
-        championRepository.delete(champion.id!!)
+        championRepository.deleteById(champion.id!!)
 }
