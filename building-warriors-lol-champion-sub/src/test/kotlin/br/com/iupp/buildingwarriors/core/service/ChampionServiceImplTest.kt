@@ -1,39 +1,28 @@
 package br.com.iupp.buildingwarriors.core.service
 
+import br.com.iupp.buildingwarriors.core.mapper.ChampionMapper.championToEntity
+import br.com.iupp.buildingwarriors.core.model.Champion
+import br.com.iupp.buildingwarriors.core.model.ChampionDifficulty.MODERATE
+import br.com.iupp.buildingwarriors.core.model.ChampionRole.MAGE
+import br.com.iupp.buildingwarriors.core.model.ChampionRole.TANK
+import br.com.iupp.buildingwarriors.core.ports.ChampionRepositoryPort
+import br.com.iupp.buildingwarriors.entrypoint.listener.handler.exception.EntityNotFound
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.AnnotationSpec
+import io.kotest.matchers.shouldBe
 import io.micronaut.test.extensions.kotest.annotation.MicronautTest
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import java.util.*
 
 @MicronautTest
 class ChampionServiceImplTest : AnnotationSpec() {
 
-//    private val mockedRepository = mockk<ChampionRepositoryPort>()
-//
-//    private val service = ChampionServiceImpl(mockedRepository)
-//
-//    @Test
-//    fun `deve cadastrar champion`() {
-//        val championId = UUID.randomUUID()
-//        val champion = ChampionEntity(
-//            name = "Ahri",
-//            shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
-//            role = ChampionRole.MAGE,
-//            difficulty = ChampionDifficulty.MODERATE
-//        )
-//        val request = mockk<ChampionRequest>()
-//        every { request.toModel() } returns champion.apply { id = championId }
-//        every { mockedRepository.save(champion) } returns champion
-//
-//        val serviceResponse = service.saveChampion(request)
-//
-//        with(serviceResponse) {
-//            id shouldBe championId.toString()
-//            name shouldBe champion.name
-//            shortDescription shouldBe champion.shortDescription
-//            role shouldBe champion.role
-//            difficulty shouldBe champion.difficulty
-//        }
-//    }
-//
+    private val mockedRepository = mockk<ChampionRepositoryPort>()
+
+    private val service = ChampionServiceImpl(mockedRepository)
+
 //    @Test
 //    fun `deve encontrar campeao cadastrado`() {
 //        val championId = UUID.randomUUID()
@@ -68,85 +57,40 @@ class ChampionServiceImplTest : AnnotationSpec() {
 //    }
 //
 //    @Test
-//    fun `deve atualizar champion`() {
-//        val championId = UUID.randomUUID()
-//        val champion = ChampionEntity(
-//            name = "Ahri",
-//            shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
-//            role = ChampionRole.MAGE,
-//            difficulty = ChampionDifficulty.MODERATE
-//        ).apply { id = championId }
-//        val updateRequest = ChampionRequest(
-//            name = "Riven",
-//            shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
-//            role = "FIGHTER",
-//            difficulty = "HIGH"
-//        )
-//        every { mockedRepository.findById(championId) } returns Optional.of(champion)
-//        every { mockedRepository.update(champion) } returns champion
-//
-//        val serviceResponse = service.updateChampion(championId.toString(), updateRequest)
-//
-//        serviceResponse.isPresent shouldBe true
-//        with(serviceResponse.get()) {
-//            id shouldBe champion.id.toString()
-//            name shouldBe (if (updateRequest.name.isNullOrBlank()) updateRequest.name else champion.name)
-//            shortDescription shouldBe (if (updateRequest.shortDescription.isNullOrBlank()) updateRequest.shortDescription else champion.shortDescription)
-//            role shouldBe (if (updateRequest.role.isNullOrBlank()) updateRequest.role else champion.role)
-//            difficulty shouldBe (if (updateRequest.difficulty.isNullOrBlank()) updateRequest.difficulty else champion.difficulty)
-//        }
-//    }
-//
-//    @Test
-//    fun `deve retornar optional vazio quando nao encontrar champion para atualizar`() {
-//        val updateRequest = ChampionRequest(
-//            name = "Riven",
-//            shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
-//            role = "FIGHTER",
-//            difficulty = "HIGH"
-//        )
-//        every { mockedRepository.findById(any()) } returns Optional.empty()
-//
-//        val serviceResponse = service.updateChampion(UUID.randomUUID().toString(), updateRequest)
-//
-//        serviceResponse.isEmpty shouldBe true
-//    }
-//
-//    @Test
 //    fun `deve encontrar todos champions cadastrados`() {
 //        val champions: List<ChampionEntity> = listOf(
 //            ChampionEntity(
 //                name = "Rammus",
 //                shortDescription = "Idolatrado por muitos, dispensado por alguns e misterioso para todos, Rammus é um ser curioso e enigmático.",
-//                role = ChampionRole.TANK,
+//                role = TANK,
 //                difficulty = ChampionDifficulty.MODERATE
 //            ),
 //            ChampionEntity(
 //                name = "Morgana",
 //                shortDescription = "Dividida entre sua natureza mortal e celestial, Morgana prendeu suas asas para preservar sua humanidade e inflige sua dor e amargura nos desonestos e corruptos.",
-//                role = ChampionRole.SUPPORT,
+//                role = SUPPORT,
 //                difficulty = ChampionDifficulty.LOW
 //            ),
 //            ChampionEntity(
 //                name = "Ashe",
 //                shortDescription = "A mãe de guerra Glacinata da tribo de Avarosa, Ashe comanda a horda mais populosa do norte.",
-//                role = ChampionRole.MARKSMAN,
+//                role = MARKSMAN,
 //                difficulty = ChampionDifficulty.MODERATE
 //            ),
 //            ChampionEntity(
 //                name = "Ahri",
 //                shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
-//                role = ChampionRole.MAGE,
+//                role = MAGE,
 //                difficulty = ChampionDifficulty.MODERATE
 //            ), ChampionEntity(
 //                name = "Master Yi",
 //                shortDescription = "Master Yi treinou seu corpo e afiou sua mente para que pensamento e ação se tornassem quase um só.",
-//                role = ChampionRole.ASSASSIN,
+//                role = ASSASSIN,
 //                difficulty = ChampionDifficulty.MODERATE
 //            ), ChampionEntity(
 //                name = "Riven",
 //                shortDescription = "Outrora mestra das espadas nos esquadrões de Noxus, agora Riven é uma expatriada em uma terra que um dia já tentou conquistar.",
-//                role = ChampionRole.FIGHTER,
+//                role = FIGHTER,
 //                difficulty = ChampionDifficulty.HIGH
 //            )
 //        )
@@ -157,11 +101,73 @@ class ChampionServiceImplTest : AnnotationSpec() {
 //        val championsDetailsResponse = champions.map { ChampionResponse(it) }
 //        functionReturn shouldContainExactlyInAnyOrder championsDetailsResponse
 //    }
-//
-//    @Test
-//    fun `deve deletar campeao`() {
-//        val championId = UUID.randomUUID()
-//        every { mockedRepository.deleteById(championId) } returns Unit
-//        service.deleteChampion(championId.toString())
-//    }
+
+    @Test
+    fun `deve cadastrar champion`() {
+        val champion = Champion(
+            name = "Ahri",
+            shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
+            role = MAGE,
+            difficulty = MODERATE
+        )
+        every { mockedRepository.save(championToEntity(champion)) } returns champion
+
+        service.saveChampion(champion)
+
+        verify { mockedRepository.save(championToEntity(champion)) }
+    }
+
+    @Test
+    fun `deve atualizar champion`() {
+        val champion = Champion(
+            id = UUID.randomUUID(),
+            name = "Shen",
+            shortDescription = "Com uma conexão inata com o poder latente de Runeterra, Ahri é uma vastaya capaz de transformar magia em orbes de pura energia.",
+            role = TANK,
+            difficulty = MODERATE
+        )
+        val updateChampionRequest = Champion(
+            id = champion.id,
+            name = "Ahri",
+            role = MAGE
+        )
+        every { mockedRepository.findById(champion.id!!) } returns Optional.of(champion)
+        every {
+            mockedRepository.update(
+                championToEntity(champion.apply {
+                    name = updateChampionRequest.name
+                    role = updateChampionRequest.role
+                }
+                ))
+        } returns champion
+
+        service.updateChampion(updateChampionRequest)
+
+        verify { mockedRepository.update(championToEntity(champion)) }
+    }
+
+    @Test
+    fun `deve lançar EntityNotFound quando não encontrar registro para atualizar `() {
+        val updateChampionRequest = Champion(
+            id = UUID.randomUUID(),
+            name = "Ahri",
+            role = MAGE
+        )
+        every { mockedRepository.findById(updateChampionRequest.id!!) } returns Optional.empty()
+
+        val exception = shouldThrow<EntityNotFound> { service.updateChampion(updateChampionRequest) }
+
+        verify { mockedRepository.findById(updateChampionRequest.id!!) }
+        exception.entity shouldBe "champion"
+    }
+
+    @Test
+    fun `deve deletar campeao`() {
+        val champion = Champion(id = UUID.randomUUID())
+        every { mockedRepository.delete(champion.id!!) } returns Unit
+
+        service.deleteChampion(champion)
+
+        verify { mockedRepository.delete(champion.id!!) }
+    }
 }
