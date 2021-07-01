@@ -7,6 +7,7 @@ import br.com.iupp.buildingwarriors.core.model.ChampionRole
 import br.com.iupp.buildingwarriors.core.model.ChampionRole.*
 import br.com.iupp.buildingwarriors.entrypoint.listener.request.ChampionRequest
 import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionEntity
+import com.datastax.oss.driver.api.core.cql.Row
 import java.util.*
 import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionDifficulty as RepositoryDifficulty
 import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionRole as RepositoryRole
@@ -83,5 +84,15 @@ object ChampionMapper {
         ChampionDifficulty.valueOf(value.toUpperCase())
     } catch (e: IllegalArgumentException) {
         null
+    }
+
+    fun cqlRowToChampion(row: Row): Champion {
+        return Champion(
+            id = row.getUuid("id"),
+            name = row.getString("name")!!,
+            shortDescription = row.getString("shortDescription")!!,
+            role = row.getString("role")?.let(ChampionMapper::stringToChampionRole),
+            difficulty = row.getString("difficulty")?.let(ChampionMapper::stringToChampionDifficulty)
+        )
     }
 }

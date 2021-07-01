@@ -1,11 +1,11 @@
 package br.com.iupp.buildingwarriors.infrastructure.repository
 
-import br.com.iupp.buildingwarriors.core.mapper.ChampionMapper
+import br.com.iupp.buildingwarriors.core.mapper.ChampionMapper.championEntityToModel
+import br.com.iupp.buildingwarriors.core.mapper.ChampionMapper.cqlRowToChampion
 import br.com.iupp.buildingwarriors.core.model.Champion
 import br.com.iupp.buildingwarriors.core.ports.ChampionRepositoryPort
 import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionEntity
 import com.datastax.oss.driver.api.core.CqlSession
-import com.datastax.oss.driver.api.core.cql.Row
 import com.datastax.oss.driver.api.core.cql.SimpleStatement
 import java.util.*
 import javax.inject.Singleton
@@ -16,7 +16,7 @@ class ChampionRepositoryImpl(private val cqlSession: CqlSession) : ChampionRepos
     override fun findById(id: UUID): Optional<Champion> {
         return Optional.ofNullable(
             cqlSession.execute(SimpleStatement.newInstance("SELECT * from champion where id = ?", id)).one()
-        ).map(this::mapToChampion)
+        ).map(::cqlRowToChampion)
     }
 
     override fun save(champion: ChampionEntity): Champion {
@@ -31,7 +31,7 @@ class ChampionRepositoryImpl(private val cqlSession: CqlSession) : ChampionRepos
                 champion.difficulty.toString()
             )
         )
-        return ChampionMapper.championEntityToModel(champion)
+        return championEntityToModel(champion)
     }
 
     override fun update(champion: ChampionEntity): Champion {
@@ -50,15 +50,5 @@ class ChampionRepositoryImpl(private val cqlSession: CqlSession) : ChampionRepos
 
     override fun deleteById(id: UUID) {
         cqlSession.execute(SimpleStatement.newInstance("DELETE from champion where id = ?", id))
-    }
-
-    private fun mapToChampion(row: Row): Champion {
-        return Champion(
-            id = row.getUuid("id"),
-            name = row.getString("name")!!,
-            shortDescription = row.getString("shortDescription")!!,
-            role = row.getString("role")?.let(ChampionMapper::stringToChampionRole),
-            difficulty = row.getString("difficulty")?.let(ChampionMapper::stringToChampionDifficulty)
-        )
     }
 }
