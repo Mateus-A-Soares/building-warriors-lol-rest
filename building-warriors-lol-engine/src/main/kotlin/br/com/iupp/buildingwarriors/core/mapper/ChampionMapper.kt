@@ -5,6 +5,7 @@ import br.com.iupp.buildingwarriors.core.model.ChampionDifficulty
 import br.com.iupp.buildingwarriors.core.model.ChampionDifficulty.*
 import br.com.iupp.buildingwarriors.core.model.ChampionRole
 import br.com.iupp.buildingwarriors.core.model.ChampionRole.*
+import br.com.iupp.buildingwarriors.entrypoint.controller.response.ChampionResponse
 import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionEntity
 import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionDifficulty as RepositoryDifficulty
 import br.com.iupp.buildingwarriors.infrastructure.repository.entity.ChampionRole as RepositoryRole
@@ -46,5 +47,14 @@ object ChampionMapper {
         ChampionDifficulty.valueOf(value.toUpperCase())
     } catch (e: IllegalArgumentException) {
         null
+    }
+
+    fun championToResponse(champion: Champion) = with(champion) {
+        ChampionResponse(
+            name = name,
+            shortDescription = shortDescription,
+            role = role.toString(),
+            difficulty = difficulty.toString()
+        )
     }
 }
